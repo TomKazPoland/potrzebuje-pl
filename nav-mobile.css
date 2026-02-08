@@ -1,0 +1,63 @@
+/* Domyślnie ukrywamy wersję mobilną CTA (będzie pokazana tylko w media query) */
+.nav-cta-mobile{
+  display: none;
+}
+
+@media (max-width: 920px){
+  .nav-inner{
+    padding: 8px 0;
+  }
+
+  /* Logo + główne linki w jednej kolumnie */
+  .nav-top-row{
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+  }
+
+  /* Główne linki: przewijane poziomo, gdy się nie mieszczą */
+  .nav-links{
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .nav-link{
+    white-space: nowrap;
+    font-size: 0.90rem;
+    padding: 8px 10px;
+  }
+
+  /* DRUGI WIERSZ: języki + Kontakt po prawej */
+  .nav-langs{
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* lewa – języki, prawa – Kontakt */
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.95rem; /* podobnie jak .nav-link w pierwszym wierszu */
+  }
+
+  .nav-langs-left{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .nav-lang{
+    padding: 4px 10px;
+  }
+
+  /* Na mobile ukrywamy CTA z pierwszego wiersza... */
+  .nav-cta-desktop{
+    display: none;
+  }
+
+  /* ...a pokazujemy CTA w drugim wierszu */
+  .nav-cta-mobile{
+    display: inline-flex;
+    font-size: 0.95rem;
+    padding: 8px 14px;
+  }
+}
