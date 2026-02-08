@@ -7,7 +7,8 @@
  */
 
 # === OpenAI ===
-define('OPENAI_API_KEY', getenv('OPENAI_API_KEY') ?: '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');
+$OPENAI_API_KEY = getenv('OPENAI_API_KEY');
+
 define('OPENAI_MODEL', 'o4-mini');   // model id (e.g. o4-mini)
 
 # === Mini-demo limits ===
