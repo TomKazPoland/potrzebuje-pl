@@ -7,9 +7,37 @@
  */
 
 # === OpenAI ===
-$OPENAI_API_KEY = getenv('OPENAI_API_KEY');
+$OPENAI_API_KEY =
+    getenv('OPENAI_API_KEY')
+    ?: ($_ENV['OPENAI_API_KEY'] ?? null)
+    ?: ($_SERVER['OPENAI_API_KEY'] ?? null);
+
+if (!$OPENAI_API_KEY) {
+    // Fallback for shared-hosting: keep secret outside repo and outside public_html
+    $secret_file = '/home/potrzebu/secrets/openai_key.php';
+    if (file_exists($secret_file)) {
+        $OPENAI_API_KEY = require $secret_file;
+    }
+}
+
+$OPENAI_API_KEY = is_string($OPENAI_API_KEY) ? trim($OPENAI_API_KEY) : '';
+
+if ($OPENAI_API_KEY === '') {
+    // UWAGA: nie echo, tylko die — i najlepiej bez HTML, bo demo_api oczekuje JSON.
+    // Jeśli to wyskoczy, demo_api.php złapie brak klucza i zwróci błąd JSON.
+    define('OPENAI_API_KEY', '');
+} else {
+    define('OPENAI_API_KEY', $OPENAI_API_KEY);
+}
 
 define('OPENAI_MODEL', 'o4-mini');   // model id (e.g. o4-mini)
+
+
+
+error_log("OPENAI_API_KEY length=" . strlen(OPENAI_API_KEY));
+
+
+
 
 # === Mini-demo limits ===
 define('DEMO_MAX_INPUT_WORDS', 20);      // max words in user question
