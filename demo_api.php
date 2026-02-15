@@ -103,17 +103,28 @@ if (($counter['calls'] ?? 0) >= DEMO_MAX_DAILY_CALLS){
 
 // --- quick classification for "translation-only" requests (very simple heuristic) ---
 $isTranslation = false;
-$lower = mb_strtolower($question, 'UTF-8');
-if (preg_match('/\b(tłumacz|przetłumacz|translate|übersetze)\b/u', $lower)){
+
+// Safe lowercase: use mbstring if available, otherwise fall back to strtolower (ASCII-safe).
+// For our keywords (pl/en/de trigger words), strtolower is sufficient as fallback.
+$lower = is_string($question) ? trim($question) : '';
+$lower = function_exists('mb_strtolower')
+  ? mb_strtolower($lower, 'UTF-8')
+  : strtolower($lower);
+
+if (preg_match('/\b(tłumacz|przetłumacz|translate|übersetze)\b/u', $lower)) {
   $isTranslation = true;
 }
-if ($isTranslation && ($counter['translations'] ?? 0) >= DEMO_MAX_TRANSLATIONS){
+
+if ($isTranslation && ($counter['translations'] ?? 0) >= DEMO_MAX_TRANSLATIONS) {
   log_demo_event('limit_translations', $question, [
-    'translations' => $counter['translations'],
+    'translations' => $counter['translations'] ?? 0,
     'limit'        => DEMO_MAX_TRANSLATIONS
   ]);
   json_out(429, ['error' => 'Limit tłumaczeń został przekroczony.']);
 }
+
+
+
 
 // --- build system prompt (language-specific) ---
 $siteContextPl = "potrzebuje.pl: szkolenia AI/LLM i praktyczne wdrożenia. Robimy to dobrze i pod klienta: ustalamy materiał, audytorium (rola, branża, doświadczenie), czas/budżet, termin, zdalnie czy na miejscu. Robimy szkolenie tak, żeby uczestnicy się NAUCZYLI, a nie tylko wysłuchali. Jeśli pytanie dotyczy tego co robi potrzebuje.pl – odpowiadaj na podstawie tego kontekstu i na końcu dodaj: \"W sprawach szczegółowych prosimy o kontakt z potrzebuje.pl wciskając przycisk KONTAKT\".";

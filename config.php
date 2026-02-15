@@ -13,12 +13,27 @@ $OPENAI_API_KEY =
     ?: ($_SERVER['OPENAI_API_KEY'] ?? null);
 
 if (!$OPENAI_API_KEY) {
-    // Fallback for shared-hosting: keep secret outside repo and outside public_html
-    $secret_file = '/home/potrzebu/secrets/openai_key.php';
-    if (file_exists($secret_file)) {
-        $OPENAI_API_KEY = require $secret_file;
+    // Fallback: keep secret outside repo and outside public_html
+    // Cross-env path: /home/<user>/secrets/openai_key.php (server + local)
+    $home = $_SERVER['HOME'] ?? getenv('HOME') ?? null;
+
+    // Primary: resolve via HOME (Linux server + Linux local)
+    if (is_string($home) && trim($home) !== '') {
+        $secret_file = rtrim($home, '/') . '/secrets/openai_key.php';
+        if (is_readable($secret_file)) {
+            $OPENAI_API_KEY = require $secret_file;
+        }
+    }
+
+    // Secondary fallback: if HOME is not available (some shared hosts), keep current absolute path
+    if (!$OPENAI_API_KEY) {
+        $secret_file = '/home/potrzebu/secrets/openai_key.php';
+        if (is_readable($secret_file)) {
+            $OPENAI_API_KEY = require $secret_file;
+        }
     }
 }
+
 
 $OPENAI_API_KEY = is_string($OPENAI_API_KEY) ? trim($OPENAI_API_KEY) : '';
 
@@ -34,7 +49,11 @@ define('OPENAI_MODEL', 'o4-mini');   // model id (e.g. o4-mini)
 
 
 
-error_log("OPENAI_API_KEY length=" . strlen(OPENAI_API_KEY));
+// Debug only (avoid logging secrets metadata in production)
+if (defined('PP_DEBUG') && PP_DEBUG === true) {
+    error_log("OPENAI_API_KEY length=" . strlen(OPENAI_API_KEY));
+}
+
 
 
 
