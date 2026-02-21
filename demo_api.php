@@ -25,6 +25,27 @@ function log_demo_event($type, $question, $info = []){
   }
 }
 
+/**
+ * Osobny log pytań wpisywanych przez użytkowników do pola mini-demo.
+ * Format: JSON Lines (jeden wpis na linię).
+ */
+function log_demo_user_input($question, $lang){
+  $q = trim((string)$question);
+  if ($q === '') return; // pomijamy puste wpisy
+
+  $entry = [
+    'ts'       => gmdate('c'),
+    'ip'       => $_SERVER['REMOTE_ADDR'] ?? 'unknown',
+    'lang'     => (string)$lang,
+    'question' => $q,
+  ];
+
+  $line = json_encode($entry, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+  if ($line !== false){
+    @file_put_contents(__DIR__ . '/demo_user_inputs.log', $line . "\n", FILE_APPEND | LOCK_EX);
+  }
+}
+
 function json_out($status, $payload){
   http_response_code($status);
   echo json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
@@ -58,6 +79,9 @@ $lang = isset($req['lang']) ? strtolower(trim((string)$req['lang'])) : '';
 if (!$lang) $lang = pp_lang_from_request('pl');
 $allowed = explode(',', DEMO_ALLOWED_LANGS);
 if (!in_array($lang, $allowed, true)) $lang = 'pl';
+
+// Dodatkowy log: co użytkownicy wpisują w polu demo.
+log_demo_user_input($question, $lang);
 
 // --- API key validation ---
 $apiKey = OPENAI_API_KEY;
