@@ -1,0 +1,4 @@
+# SURE_BLOCK_CONFIG_PHP
+<Files "config.php">
+  Require all denied
+</Files>

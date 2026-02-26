@@ -5,8 +5,8 @@
 
 header('Content-Type: application/json; charset=UTF-8');
 
-require_once __DIR__ . '/config.php';
-
+require_once '/home/potrzebuje/Projects/Secrets/chatgpt.php';
+require_once '/home/potrzebuje/public_html/config.php';
 /**
  * Prosty logger do pliku demo_api.log w tym samym katalogu.
  * Loguje m.in. przypadki "Brak odpowiedzi", błędy HTTP, błędy cURL.
@@ -21,7 +21,7 @@ function log_demo_event($type, $question, $info = []){
   ];
   $line = json_encode($entry, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
   if ($line !== false){
-    @file_put_contents(__DIR__ . '/demo_api.log', $line . "\n", FILE_APPEND | LOCK_EX);
+    @file_put_contents('/home/potrzebuje/logs/demo_api.log', $line . "\n", FILE_APPEND | LOCK_EX);
   }
 }
 

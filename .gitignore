@@ -3,3 +3,10 @@ _counters/
 _logs/
 error_log
 *.log
+/Projects/Secrets/
+/logs/
+/sure_logs/
+/sure_backups/
+/Projects/Server_Only/
+**/*.bkup_*
+**/error_log
