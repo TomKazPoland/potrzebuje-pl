@@ -3,6 +3,9 @@
 Created:
 18/06/26 14:10:25 CEST
 
+Fixed:
+18/06/26 14:12:17 CEST
+
 Description:
 Pre-redesign checkpoint for potrzebuje.pl.
 
@@ -20,9 +23,6 @@ pre-redesign-3-pillars-20260618_141025
 
 Production source snapshot:
 snapshots/PRE_REDESIGN_3_PILLARS_20260618_141025/public_html_source_snapshot
-
-Server archive:
-/home/potrzebuje/Projects/Server_Only/potrzebuje-pl/sure_backups/PRE_REDESIGN_3_PILLARS_20260618_141025_public_html_sanitized.tar.gz
 
 Important:
 This backup intentionally excludes secrets, logs, runtime counters, mounted applications, databases and generated files.

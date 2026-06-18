@@ -5,6 +5,9 @@
 Date:
 18/06/26 14:10:25 CEST
 
+Fixed:
+18/06/26 14:12:17 CEST
+
 Git branch:
 backup/pre-redesign-3-pillars-20260618_141025
 
@@ -34,11 +37,9 @@ Excluded from GitHub snapshot:
 - databases
 - admin tokens
 
-Server-side archive:
-/home/potrzebuje/Projects/Server_Only/potrzebuje-pl/sure_backups/PRE_REDESIGN_3_PILLARS_20260618_141025_public_html_sanitized.tar.gz
-
-Server-side local repo archive:
-/home/potrzebuje/Projects/Server_Only/potrzebuje-pl/sure_backups/PRE_REDESIGN_3_PILLARS_20260618_141025_local_repo_before_git_ops.tar.gz
+Important:
+Initial push from server failed because GitHub rejected HTTPS password authentication.
+If this branch is not visible on GitHub yet, use the transfer bundle created on the server.
 
 Restore note:
 Use this point as the rollback/reference state before implementing the extended three-pillar website.

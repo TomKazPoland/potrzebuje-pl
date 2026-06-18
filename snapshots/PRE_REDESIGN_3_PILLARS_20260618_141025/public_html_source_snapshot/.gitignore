@@ -1,0 +1,5 @@
+_data/
+_counters/
+_logs/
+error_log
+*.log
