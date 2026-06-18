@@ -40,12 +40,12 @@ $OPENAI_API_KEY = is_string($OPENAI_API_KEY) ? trim($OPENAI_API_KEY) : '';
 if ($OPENAI_API_KEY === '') {
     // UWAGA: nie echo, tylko die — i najlepiej bez HTML, bo demo_api oczekuje JSON.
     // Jeśli to wyskoczy, demo_api.php złapie brak klucza i zwróci błąd JSON.
-    define('OPENAI_API_KEY', '');
+// SURE_DISABLED_OPENAI     define('OPENAI_API_KEY', '');
 } else {
-    define('OPENAI_API_KEY', $OPENAI_API_KEY);
+// SURE_DISABLED_OPENAI     define('OPENAI_API_KEY', $OPENAI_API_KEY);
 }
 
-define('OPENAI_MODEL', 'o4-mini');   // model id (e.g. o4-mini)
+// SURE_DISABLED_OPENAI define('OPENAI_MODEL', 'o4-mini');   // model id (e.g. o4-mini)
 
 
 

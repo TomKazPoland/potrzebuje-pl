@@ -82,14 +82,21 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                . "UA: " . $ua . "\n\n"
                . $message . "\n";
 
-    $headers = "From: " . $senderEmail . "\r\n"
+    $headers = "From: kontakt@potrzebuje.pl\r\n"
              . "Reply-To: " . $senderEmail . "\r\n"
+             . "MIME-Version: 1.0\r\n"
              . "Content-Type: text/plain; charset=UTF-8\r\n";
 
-    $sent = @mail($to, $emailSubject, $emailBody, $headers);
+    $sent = mail($to, $emailSubject, $emailBody, $headers, "-fkontakt@potrzebuje.pl");
 
     if ($sent) $successMessage = $tr['ok'];
     else $errorMessage = $tr['err_send'];
+        $logLine = date("c")
+            . " | Reply-To: " . $senderEmail
+            . " | IP: " . ($_SERVER["REMOTE_ADDR"] ?? "unknown")
+            . " | UA: " . ($_SERVER["HTTP_USER_AGENT"] ?? "unknown")
+            . PHP_EOL;
+        file_put_contents("/home/potrzebuje/logs/contact_mail_errors.log", $logLine, FILE_APPEND | LOCK_EX);
   }
 }
 
