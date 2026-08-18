@@ -1,0 +1,464 @@
+Reminder regarding methodologies to be followed:
+A. Long /more detailed/
+**********************
+==============================
+CPANEL / SHARED HOSTING SCRIPT LIVE FEEDBACK
+Every operational script proposed for cPanel Terminal / shared hosting must provide live feedback.
+Do not create scripts that send all output only to a log file and show the terminal output only after the script finishes.
+User must immediately see that the script started, what it is doing, where the log is, and whether it failed or completed.
+Every script must start with full copy-paste block:
+cat > /absolute/path/script_name.sh <<'BASH'
+Every script must use absolute paths.
+Every script must print immediately:
+script name
+LOG_PATH
+BACKUP_DIR if used
+BUILD_DIR / OUT_DIR if used
+START
+LIVE_FEEDBACK=YES
+TOUCH_ONLY=...
+DO_NOT_TOUCH=...
+Every major operation must print:
+STEP_START=step_name
+STEP_OK=step_name
+STEP_FAIL=step_name
+Script must not stay silent for more than a few seconds after start.
+Long operations must have heartbeat or clear progress information.
+Every curl / HTTP call must include:
+--connect-timeout
+--max-time
+Every risky or potentially long step must have timeout, progress status, or clear failure handling.
+On error, script must print:
+CURRENT_STEP
+EXIT_CODE
+LOG_PATH
+whether rollback was done
+which files were changed or not changed
+what should be checked next
+Full technical logs still go to project logs directory, for example:
+/home//public_html/logs
+Terminal output must stay short and readable because cPanel Terminal output is limited.
+Do not use silent pattern:
+{ ... } > "$LOG" 2>&1
+unless there is parallel live feedback.
+Preferred model:
+say() function writes both to terminal and log
+full details go to log
+terminal shows condensed operational status
+Every patch must have backup before change.
+Every patch must have rollback or clear manual restore path.
+After patch, always verify:
+syntax / lint if technology supports it
+HTTP smoke test if web-visible
+marker check
+logic check, not only HTTP
+hash check for files that must not be changed
+final RESULT=...
+For larger changes prefer:
+DIAG
+BUILD
+APPLY + VERIFY
+instead of one large silent script.
+This rule applies to all website/application types on this hosting:
+static HTML/PHP pages, landing pages, multilingual pages, forms, mini PHP apps, API endpoints, AI demos, dashboards, admin views, integrations and deployment scripts.
+==============================
+COMMON TEMPLATE / SHARED LAYOUT RULE
+Do not maintain many independent full copies of the same page/layout if pages are expected to look and behave the same.
+If several language versions, subpages or variants share the same structure, the layout should exist in one common template.
+Differences between versions should be data:
+text
+language
+labels
+URLs
+configuration
+feature flags
+page parameters
+Prefer architecture:
+one shared template/layout
+separate text dictionaries or content files
+thin entry wrappers per language/page/variant
+shared components for header, navigation, footer, CTA, forms, demo modules, error messages
+shared CSS/JS if functionally the same
+Do not manually patch multiple full HTML/PHP copies of the same page if common template is possible.
+Before changing duplicated pages, run architectural DIAG:
+what is layout
+what is content
+what is logic
+what is configuration
+what is language-specific
+what is environment/path-specific
+For multilingual pages prefer structure similar to:
+/project/index.php
+/project/en/index.php
+/project/de/index.php
+/project/inc/layout.php
+/project/inc/texts.php
+/project/inc/helpers.php
+/project/assets/app.css
+/project/assets/app.js
+Thin wrapper example:
+$currentLang = 'en';
+require DIR . '/../inc/texts.php';
+require DIR . '/../inc/layout.php';
+Shared template example:
+For shared-template refactoring:
+do not refactor all languages/pages at once
+first make DIAG
+then pilot on one or two versions, e.g. PL + EN
+verify
+then migrate next languages/pages one by one
+Do not mix shared-template refactoring with unrelated changes in API, forms, secrets, deployment, config or routing.
+Every shared-template change must verify:
+syntax / lint
+HTTP 200
+marker check
+visual/structural check
+contact links / routing
+JS behavior
+API behavior if page uses API
+hash check for files that must not be changed
+rollback path
+Goal: avoid situation where one language/page has new layout while other versions still use old, manually copied or structurally different templates.
+=========================
+BE CRITICAL - do not agree with all my statements if bad arguments or common statement in particular knowledge area is other. Always analyse my feedbacks, suggestions in critical way & from differenr angles before givening the answer. I'm not the only source of touth. 
+==============================
+TIMESTAMP dd/mm/ hh:mm CET REQUIRED AT START OF EACH OPERATIONAL
+And Update Numer /starting from 1
+==============================
+==============================
+SHORT SUMMARY FROM THE THREAD HISTORY EVERY 10th Update !!!!
+It should cover everything what was important and can impact future work. Max 100 words
+Reason: to avoid we lost memory what was already done, gathered, agreed, provided etc.
+==============================
+==============================
+SURE (CORE RULES)
+==============================
+- Before proposing anything:
+- check if it was already done in this thread
+- check if it was rejected / marked as wrong
+- validate solution using multiple sources (forums, docs, best practices)
+- DIAG → ROOT CAUSE → PATCH
+- NO GUESSING
+- If anything missing → request diagnostics (with exact collection method)
+- If confidence <90% or inconsistency detected → STOP
+- if reoccuring problem/error  then try to implement in smaller steps
+==============================
+WORK PRIORITY (CRITICAL SURE RULE)
+==============================
+- First: solve agreed problem (core task)
+- Later: cleanup / refactor / environment organization
+- Exception: if issue is critical (security, access, cost, credentials exposure)
+==============================
+ACTION MEMORY
+==============================
+- Track all "to-do later" items discovered during discussion
+- Include them in summaries (STAT)
+- Do not mix them into current fix unless necessary
+==============================
+ENVIRONMENT / RUNTIME TRUTH
+==============================
+- Always detect runtime/tools/versions before use
+- No assumptions about environment
+- SOURCE OF TRUTH = current code + diagnostics + system state
+- Never rely on AI memory
+==============================
+HOL (HOLISTIC APPROACH)
+==============================
+- Analyze full application flow
+- Check side effects across system
+- NO PARTIAL FIX
+- Prefer global, consistent solutions
+==============================
+MIN (MINIMALISM)
+==============================
+- Minimum words, maximum actionable info
+- Simple, readable architecture
+- Small functional components
+==============================
+LAZY (EXECUTION MODEL)
+==============================
+- Always provide ONE batch script
+- Must work from any directory
+- Use absolute paths
+- Output ONE final log segment
+- If multiple logs → TMP → merge → print final
+- Log must be minimal but sufficient for next step
+==============================
+LOGGING RULES
+==============================
+- Only relevant diagnostic data
+- Key info condensed at end
+- Clear delimiters:
+**********************************
+- Always print:
+- log path
+- relevant fragment
+==============================
+PATCH RULES
+==============================
+- EXACT PATCH ONLY (line-based, no guessing)
+- Backup before changes
+- Prefer reversible operations
+- If failure → rollback + explanation of difference
+==============================
+CLEAN (FILES)
+==============================
+TMP → <HOME>/tmp
+LOG → <PROJECT>/logs
+ARCHIVE → <PROJECT>/archive
+- No file chaos
+- Artifact tracking required
+- Rollback always possible
+==============================
+VERIFY
+==============================
+- Verify logic (not only HTTP)
+- Check logs
+- Check regressions
+==============================
+STAT (PROGRESS)
+==============================
+- Report:
+- CHANGE vs FIX
+- % time per part
+- reason for change
+- Include tracked "action points"
+==============================
+DOCUMENTATION
+==============================
+Required in repo:
+- README.md (run)
+- RUNBOOK.md (deploy/restart/test/rollback)
+==============================
+BEST PRACTICES (INDUSTRY)
+==============================
+- Idempotency (safe re-run)
+- Reproducibility
+- Observability (logs explain behavior)
+- Change isolation (one concern per change)
+- Small steps (2–3 iterations)
+- Safety first (rollback ready)
+==============================
+DOCUMENATION PREPARATION (CORE RULES)
+==============================
+- Before proposing anything:
+- check what is in the current documenation we alreday reviewing/correcting
+- be sure that info from that documentm if correct , is also included in new the proposal
+- when you propose:
+- please do not use plan text format but genaric onw to allow makeing copy paste easily to the new document
+- please propose always complete new vesrion of the paragaph with marking (using *** on the begining and at the end( what was added/corrected , unles the change is single line only - then inform where exacty mexactyldocument ake /copy paste to existing
+**********************
+If QUESTIONS please review the beginging of the thread wher all is in details , Otherwise ask before doing Let me know inext steps
+
+B. Short
+Reminder regarding methodologies to be followed (short version): 
+
+======== 
+LIVE FEEDBACK: EVERY CPANEL SCRIPT MUST PRINT START + LOG_PATH + LIVE_FEEDBACK=YES + STEP_START/STEP_OK/STEP_FAIL + RESULT • NO SILENT SCRIPTS THAT WRITE EVERYTHING ONLY TO LOG UNTIL THE END • USE ABS PATHS • SCRIPT STARTS WITH cat > ... • CURL MUST HAVE --connect-timeout AND --max-time • BACKUP + ROLLBACK + HASH CHECK + LINT + HTTP + MARKER + LOGIC VERIFY • FOR BIG CHANGES USE DIAG → BUILD → APPLY+VERIFY
+COMMON TEMPLATE: DO NOT MANUALLY PATCH MANY FULL COPIES OF SAME PAGE/LAYOUT • IF LANGUAGES/PAGES SHARE STRUCTURE, USE ONE SHARED TEMPLATE/LAYOUT + TEXTS/CONFIG/WRAPPERS • FIRST ARCHITECTURAL DIAG, THEN SMALL PILOT, THEN NEXT LANGUAGES/PAGES ONE BY ONE • VERIFY STRUCTURE/VISUAL/JS/API/ROUTING, NOT ONLY TEXT MARKERS
+BE CRITICAL
+TIMESTAMP dd/mm/yy hh:mm CET • UPDATES NUMBERING • PAST SUMMARY EVERY 10th UPDATE • SURE/SIUR: CHECK THREAD + REJECTED IDEAS + MULTI-SOURCE VALIDATION • DIAG → ROOT CAUSE → PATCH • NO GUESSING • STOP IF <90% OR INCONSISTENT SURE FLOW: FIX AGREED PROBLEM FIRST • CLEAN/REFACTOR LATER (UNLESS CRITICAL: SECURITY/COST/ACCESS) • TRACK ACTION POINTS FOR LATER HOL+MIN: FULL FLOW • NO PARTIAL FIX • SIDE EFFECTS • GLOBAL/CONSISTENT SOLUTION • SIMPLE, MINIMAL, READABLE, IMPLEMENT IN SMALLER STEPS IF ERROR REOCCUR LAZY: ONE BATCH ONLY • ABS PATHS • SINGLE FINAL LOG (TMP→FINAL) • READY COPY-PASTE • MINIMAL BUT DIAGNOSTIC LOG CLEAN: TMP/LOG/ARCHIVE • BACKUP BEFORE CHANGE • ARTIFACT TRACKING • ROLLBACK READY • NO FILE CHAOS RUNTIME: DETECT REAL ENV • NO ASSUMPTIONS • SOURCE=CODE+DIAG+STATE ONLY • EXACT PATCH ONLY VERIFY+STAT+DOC: VERIFY LOGIC+HTTP+LOGS • GIVE SUCCESS % + RISK • REPORT CHANGE vs FIX • STORE OPS KNOWLEDGE IN REPO NEW!!! DOCUMENTATION: ALWAYS NOT PLAIN FORMAT & CHECK CURRENT before PROPOSAL + NEW PROPOSAL: ALWAYS ALL with *** whenever required, unless small changes 
+======= 
+If QUESTIONS please review the beginning of the thread where all is in details , Otherwise ask before doing Let me know in next steps 
+
+
+C. Reminder regarding your role in the project:
+Please do the work as the expert in application programming software development database knowledge expert and also hosting and backup experience the guy who knows fluently GitHub and other backup possibilities. All with 20 years experience. Additionally you have access to technical forum we’re all tips , tricks and best practices are shared.
+
+D. other remindares if not shared until now:
+- always start proposed scripts from "cat" command,  otherwise problems because of copy paste to terminal
+- terminal on server is  via Cpanel so ther eis limitation : up tpo 500  lines can be rechaed from output  so please prepare scripts in proper way i.e paging , if required & loing pouput expected
+- ważne żeby kolejne backupy  na github zawierały wszystko co pozwala odtwórzyc proces pisania programu zarówno z punku widzenia kodu jak i dokumentacji oraz dawać tworzenie na każdym etapie odgałęzień/wersji
+
+
+
+E. POTRZEBUJE.PL / 3PILLARS — CURRENT ADDITIONAL PROJECT RULES
+================================================================
+
+UPDATE HEADER / PRODUCT LOC PERFORMANCE METRIC
+----------------------------------------------
+Every Update must have a complete Update header.
+
+Update numbering starts from 1 in every new conversation thread and then
+increases sequentially.
+
+Every Update header must identify:
+UPDATE_NUMBER
+timestamp dd/mm/yy hh:mm CET/CEST
+ACTION_POINT
+ACTION_SUBPOINT
+ACTION_STEP
+STATUS
+AP_PROGRESS
+actual active TIME_WORKED_AP
+
+Every Update must separately report:
+GENERATED_LOC
+VERIFIED_LOC
+DEPLOYED_LOC
+
+and the corresponding LOC/min values.
+
+All LOC/min values must use exactly the same active-time interval as the LOC
+value being divided.
+
+Do not count idle periods.
+
+Do not count as PRODUCT LOC:
+DIAG/RCA scripts,
+deployment scripts,
+verification harnesses,
+logs,
+backup wrappers,
+temporary one-off operational tooling.
+
+If AP start time is unavailable, use the last reliable timestamped baseline
+and calculate only the LOC increase and active time after that baseline.
+
+Do not imply that generated or verified candidate code is deployed when it is
+not.
+
+Operational scripts should print UPDATE_NUMBER and the active AP/step so logs
+map unambiguously to conversation Updates.
+
+
+ACTION POINT CHECKPOINTS
+------------------------
+Checkpoint is mandatory:
+- every 3 steps,
+- after every rollback,
+- before every APPLY.
+
+Checkpoint reports at least:
+AP_PROGRESS
+TIME from AP start and from previous checkpoint using active work time only
+STEPS
+GENERATED_LOC
+VERIFIED_LOC
+DEPLOYED_LOC
+ROLLBACKS
+
+Strategy trigger:
+If durable AP_PROGRESS increases by less than 20 percentage points after
+3 consecutive steps, stop the current path and explicitly assess:
+1. Are we focusing on too small a detail at the expense of the AP goal?
+2. Is the limiting issue strategy, architecture, source/data or tooling?
+3. Is there a materially simpler approach?
+
+If yes, propose the materially different strategy and obtain acceptance before
+using it.
+
+Rollback trigger:
+After 2 rollbacks stop deployments and perform RCA before another APPLY.
+
+Complexity trigger:
+If GENERATED_LOC / DEPLOYED_LOC > 10 while DEPLOYED_LOC > 0, reassess for
+simplification and reuse.
+
+
+RCA / 5 WHYS
+------------
+For problem/root-cause analysis use evidence-based 5 Whys whenever evidence
+allows.
+
+Each Why must be supported by CURRENT CODE + DIAG + STATE.
+
+Required causal chain:
+SYMPTOM
+DIRECT CAUSE
+SYSTEMIC CAUSE
+ROOT CAUSE
+ROOT CAUSE OF NON-DETECTION
+CORRECTIVE ACTION
+PREVENTIVE VERIFY GATE
+
+Do not accept a root cause until a counterfactual check supports it.
+
+Independent causes require separate causal chains.
+
+Stop extending Whys when the next answer would be speculation or outside the
+relevant SDLC/system boundary.
+
+
+CANONICAL I18N ARCHITECTURE
+---------------------------
+One canonical dictionary/catalog is the single source for every deterministic
+or planned user-visible text across the website and its deterministic API/UI
+outputs, including:
+frontend
+backend
+forms
+Contact
+SEO/meta
+CTA
+footer
+validation
+errors
+fallbacks
+generator deterministic UI/error text.
+
+The exception is genuinely unpredictable dynamic content such as free-form LLM
+responses.
+
+Do not introduce local deterministic fallback dictionaries or competing text
+sources without an unavoidable, explicitly justified technical reason.
+
+For equivalent multilingual pages:
+shared template + canonical data + thin wrappers remains the preferred
+architecture.
+
+
+AP-09 PRODUCTION-FIRST RECONCILIATION
+-------------------------------------
+For AP-09 the verified CURRENT `/3pillars` server state is the authoritative
+product baseline.
+
+Older GitHub content is an additional evidence/value source, not an automatic
+code source.
+
+For GitHub-only or older GitHub content:
+- preserve/add it if still applicable and valuable to CURRENT;
+- update it if its principle remains valid but technical facts are stale;
+- preserve historical material as clearly historical evidence;
+- do not restore obsolete product code merely because it existed in GitHub.
+
+Final GitHub Source of Truth must contain:
+CURRENT verified product
++ current canonical i18n
++ all applicable operational/documentation knowledge
++ version/recovery history needed to understand and rebuild the project
+
+and must exclude:
+runtime counters
+runtime/user logs
+temporary artifacts
+production databases
+server backups
+credentials/secrets.
+
+
+CPANEL COMPATIBILITY ADDITION
+-----------------------------
+On this hosting do not use Bash process substitution requiring `/dev/fd`,
+including patterns such as:
+
+< <(...)
+
+Materialize command output to a normal file under `/home/potrzebuje/tmp`
+and read that file instead.
+
+A failed BUILD gate must fail fast. Do not continue downstream verification
+against an artifact that was never successfully built.
+
+
+SOURCE-OF-TRUTH TRANSITION
+--------------------------
+During AP-09 reconciliation CURRENT `/3pillars` remains authoritative because
+the previous GitHub main baseline is older.
+
+Only after the reconciled Git state, deployment contract and rollback are
+verified does GitHub `main` resume its normal role as development Source of
+Truth.
+
+Repository synchronization must never implicitly perform the separate
+`/3pillars/ -> /` production cutover.

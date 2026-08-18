@@ -1,293 +1,81 @@
 # PROJECT STATUS
 
-Last Review Date:
-18/06/2026
+Last Review Date: 18/08/2026
 
-Document Purpose:
+## 1. Overall
 
-This document provides a quick operational and business snapshot of the current state of the potrzebuje.pl ecosystem.
+Project: potrzebuje.pl
 
-Unlike MASTER_CONTEXT and OPERATIONS documentation, this file should be updated regularly and reflect current reality.
+Business stage:
+operational / customer-acquisition stage.
 
----
+Primary objective:
+acquire paying customers.
 
-# 1. OVERALL PROJECT STATUS
+Secondary objective:
+obtain customer references.
 
-Project:
+## 2. Website
 
-potrzebuje.pl
-
-Current Stage:
-
-Pre-commercial
-
-Status:
-
-Operational
-
-Primary Objective:
-
-Acquire first paying customer.
-
-Secondary Objective:
-
-Obtain first customer references.
-
----
-
-# 2. BUSINESS STATUS
-
-Business Model:
-
-Three service pillars:
-
-1. AI Education & Training
-
-2. AI Transformation & Process Improvement
-
-3. Software Development
-
-Current Revenue:
-
-No regular commercial revenue yet.
-
-Current Focus:
-
-* customer acquisition
-* first references
-* portfolio development
-* service validation
-
-Success Criteria For Current Phase:
-
-* first paying customer
-* first successful delivery
-* first reference
-
----
-
-# 3. WEBSITE STATUS
-
-Website:
-
-potrzebuje.pl
-
-Status:
-
-Production
+Current verified release candidate is live at `/3pillars/`.
 
 Languages:
+PL / EN / DE / FR / ZH / HI.
 
-* Polish
-* English
-* German
+Architecture:
+shared template + thin wrappers + canonical i18n.
 
-Core Functions:
+AP-08 Final QA:
+CLOSED 100%.
 
-* service presentation
-* lead generation
-* AI demo
-* contact channel
+## 3. Multilingual/i18n
 
-Current Assessment:
+AP-07:
+CLOSED 100%.
 
-Working.
+Canonical:
+113 records × 6 languages.
 
-Future Improvements:
+Legacy translation layer:
+removed from active product.
 
-Better visibility of the three service pillars.
+## 4. GitHub synchronization
 
----
+AP-09 is ACTIVE.
 
-# 4. AI DEMO STATUS
+Current production has been selected as the authoritative product
+baseline because it is newer than the old GitHub main state.
 
-Provider:
+GitHub content reconciliation:
+PASS.
 
-OpenAI
+Old GitHub product behavior requiring restoration:
+NONE identified.
 
-Model:
+Useful documentation/history:
+retained and updated in the new Source-of-Truth candidate.
 
-gpt-4o-mini
+## 5. Deployment
 
-Status:
+Automatic deployment:
+intentionally LOCKED during synchronization.
 
-Operational
+AP9.4 must verify the correct deployment target and rollback contract
+before push-to-main deployment is re-enabled.
 
-Purpose:
+## 6. Cutover
 
-Capability demonstration.
+`/3pillars/ → /`:
+NOT PERFORMED.
 
-Risk Level:
+No cutover decision may be made until AP-09 release readiness completes.
 
-Low
+## 7. Additional applications
 
-Future Review:
+Alpha Analyzer:
+separate project/application.
 
-Model selection may change depending on quality, cost and business requirements.
+Anonymous:
+separate project/application.
 
----
-
-# 5. APPLICATION STATUS
-
-## Alpha Analyzer
-
-Status:
-
-Operational
-
-Purpose:
-
-Investment and fund analysis.
-
-Role:
-
-Capability demonstration.
-
-Priority:
-
-Medium
-
----
-
-## Anonymous
-
-Status:
-
-Operational
-
-Purpose:
-
-Anonymization benchmark.
-
-Role:
-
-Capability demonstration.
-
-Priority:
-
-Medium
-
----
-
-# 6. INFRASTRUCTURE STATUS
-
-Hosting Provider:
-
-WEBMEDIA EUROPE LTD
-
-Hosting Type:
-
-Shared hosting
-
-Status:
-
-Operational
-
-Known Constraints:
-
-* no root access
-* limited diagnostics
-* limited server control
-* dependence on hosting provider
-
-Future Direction:
-
-Hosting migration likely.
-
-Priority:
-
-High
-
----
-
-# 7. GITHUB STATUS
-
-Main Repository:
-
-TomKazPoland/potrzebuje-pl
-
-Status:
-
-Operational
-
-Deployment:
-
-GitHub Actions → SFTP
-
-Source Of Truth:
-
-GitHub
-
-Risk Level:
-
-Low
-
----
-
-# 8. OPEN ITEMS
-
-Current Priority Tasks:
-
-1. Acquire first paying customer.
-2. Obtain first reference.
-3. Improve service presentation.
-4. Expand visibility of transformation services.
-5. Expand visibility of software development services.
-6. Continue development of demonstration applications.
-
----
-
-# 9. KNOWN RISKS
-
-Business Risks:
-
-* lack of references
-* lack of paying customers
-* early-stage business development
-
-Technical Risks:
-
-* shared hosting limitations
-* hosting provider dependency
-* limited server diagnostics
-
-Operational Risks:
-
-* documentation not regularly updated
-* knowledge concentrated in project owner
-
----
-
-# 10. NEXT MAJOR MILESTONE
-
-Target Milestone:
-
-First paying customer.
-
-Expected Outcome:
-
-* validated business model
-* first reference
-* stronger market credibility
-
----
-
-# 11. DOCUMENT MAINTENANCE
-
-Update this document whenever:
-
-* major architecture changes occur
-* hosting changes occur
-* new applications are added
-* business priorities change
-* first customer is acquired
-* first reference is obtained
-
-Recommended Review Frequency:
-
-Monthly.
-
-Document Owner:
-
-Project Owner (Tomasz)
-
+They are not part of the `/3pillars` website source tree.

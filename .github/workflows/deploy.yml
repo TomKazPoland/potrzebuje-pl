@@ -1,25 +1,14 @@
-name: Auto deploy to cPanel (SFTP)
+name: Deployment locked pending AP-09.4
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
 
 jobs:
-  deploy:
+  deployment-lock:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Download repository files
-        uses: actions/checkout@v4
-
-      - name: Upload files to hosting (SFTP)
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SFTP_HOST }}
-          port: ${{ secrets.SFTP_PORT }}
-          username: ${{ secrets.SFTP_USER }}
-          password: ${{ secrets.SFTP_PASS }}
-          source: "."
-          target: ${{ secrets.SFTP_TARGET_DIR }}
-          overwrite: true
+      - name: Deployment intentionally disabled
+        run: |
+          echo "Automatic production deployment is intentionally disabled."
+          echo "AP-09.4 must verify the exact source, target and rollback contract."
+          echo "No files were deployed."

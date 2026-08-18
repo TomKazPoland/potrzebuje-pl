@@ -1,37 +1,57 @@
 # potrzebuje.pl Branch Strategy
 
-Generated: 18/06/26 15:11:34 CEST
+Updated: 18/08/2026
 
 ## Purpose
 
-This repository now separates backup, current production baseline, and future product variants.
+Preserve a clean distinction between:
+- historical restore states,
+- active development,
+- verified release states,
+- production deployment.
 
-## Branch roles
+## Current transition
 
-- main
-  - Official source branch.
-  - Aligned to the current working production website source files before three-pillar redesign.
+The former GitHub main baseline is older than the verified August 2026
+`/3pillars` production version.
 
-- stable/original-site-before-three-pillars-20260618_151127
-  - Product variant A.
-  - Current/original website direction without the new three service pillars.
+During AP-09, current production is used as the authoritative baseline for
+constructing the next complete repository state.
 
-- redesign/three-pillars-20260618_151127
-  - Product variant B.
-  - Working branch for the planned three-pillar version:
-    1. AI Education & Training
-    2. AI Transformation & Process Improvement
-    3. Software Hub / Software House delivery
+Old GitHub content is reconciled semantically; useful documentation and
+history are preserved, obsolete product code is not restored.
 
-- backup/pre-redesign-3-pillars-20260618_141025
-  - Frozen backup branch.
-  - Do not use for active development.
-  - Restore/reference point from before redesign work.
+## Main
 
-- pre-redesign-3-pillars-20260618_141025
-  - Permanent tag marking the pre-redesign backup point.
+`main` is intended to become the official Source of Truth only after the
+reconciled candidate has been committed, verified and its deployment
+contract has passed AP9.4.
+
+## Historical branches
+
+Existing stable/backup/redesign branches remain historical recovery and
+development references unless explicitly reclassified.
+
+Do not force them into current production merely because they contain old
+code.
 
 ## Operational rule
 
-Do not edit production directly. Make changes in Git branches, verify, then deploy.
+Normal future flow after AP-09:
 
+branch/worktree
+→ BUILD/VERIFY
+→ reviewed merge to main
+→ verified deployment workflow
+→ production verification.
+
+Production must not be edited casually.
+
+Emergency production fixes must be reconciled back into Git immediately
+after verification.
+
+## Cutover
+
+`/3pillars/ → /` is a separate release decision.
+
+A GitHub synchronization must not implicitly perform that cutover.

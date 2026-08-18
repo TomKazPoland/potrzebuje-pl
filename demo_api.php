@@ -7,6 +7,7 @@ header('Content-Type: application/json; charset=UTF-8');
 
 require_once '/home/potrzebuje/Projects/Secrets/chatgpt.php';
 require_once '/home/potrzebuje/public_html/config.php';
+require_once __DIR__ . '/inc/i18n_runtime.php';
 /**
  * Prosty logger do pliku demo_api.log w tym samym katalogu.
  * Loguje m.in. przypadki "Brak odpowiedzi", błędy HTTP, błędy cURL.
@@ -77,8 +78,7 @@ if (!is_array($req)) $req = [];
 $question = isset($req['question']) ? trim((string)$req['question']) : '';
 $lang = isset($req['lang']) ? strtolower(trim((string)$req['lang'])) : '';
 if (!$lang) $lang = pp_lang_from_request('pl');
-$allowed = explode(',', DEMO_ALLOWED_LANGS);
-if (!in_array($lang, $allowed, true)) $lang = 'pl';
+$lang = pp_i18n_normalize_lang($lang, 'pl');
 
 // Dodatkowy log: co użytkownicy wpisują w polu demo.
 log_demo_user_input($question, $lang);
@@ -92,15 +92,15 @@ if (
   strpos($apiKey, '...') !== false
 ){
   log_demo_event('config_error', $question, ['reason' => 'missing_or_placeholder_api_key']);
-  json_out(500, ['error' => pp_t('err_api_key', $lang)]);
+  json_out(500, ['error' => pp_i18n_t('generator.error.api_configuration', $lang)]);
 }
 
 // --- input limits ---
 if ($question === ''){
-  json_out(400, ['error' => pp_t('err_empty', $lang)]);
+  json_out(400, ['error' => pp_i18n_t('generator.error.empty_input', $lang)]);
 }
 if (count_words($question) > DEMO_MAX_INPUT_WORDS){
-  json_out(400, ['error' => pp_t('err_words', $lang)]);
+  json_out(400, ['error' => pp_i18n_t('generator.error.word_limit', $lang)]);
 }
 
 // --- daily limits per IP (lightweight file-based counter) ---
@@ -122,7 +122,7 @@ if (($counter['calls'] ?? 0) >= DEMO_MAX_DAILY_CALLS){
     'calls' => $counter['calls'],
     'limit' => DEMO_MAX_DAILY_CALLS
   ]);
-  json_out(429, ['error' => pp_t('err_daily', $lang)]);
+  json_out(429, ['error' => pp_i18n_t('generator.error.daily_limit', $lang)]);
 }
 
 // --- quick classification for "translation-only" requests (very simple heuristic) ---
@@ -144,21 +144,29 @@ if ($isTranslation && ($counter['translations'] ?? 0) >= DEMO_MAX_TRANSLATIONS) 
     'translations' => $counter['translations'] ?? 0,
     'limit'        => DEMO_MAX_TRANSLATIONS
   ]);
-  json_out(429, ['error' => 'Limit tłumaczeń został przekroczony.']);
+  json_out(429, ['error' => pp_i18n_t('generator.error.translation_limit_exceeded', $lang)]);
 }
 
 
 
 
 // --- build system prompt (language-specific) ---
-$siteContextPl = "potrzebuje.pl: szkolenia AI/LLM i praktyczne wdrożenia. Robimy to dobrze i pod klienta: ustalamy materiał, audytorium (rola, branża, doświadczenie), czas/budżet, termin, zdalnie czy na miejscu. Robimy szkolenie tak, żeby uczestnicy się NAUCZYLI, a nie tylko wysłuchali. Jeśli pytanie dotyczy tego co robi potrzebuje.pl – odpowiadaj na podstawie tego kontekstu i na końcu dodaj: \"W sprawach szczegółowych prosimy o kontakt z potrzebuje.pl wciskając przycisk KONTAKT\".";
+$siteContextPl = "potrzebuje.pl: szkolenia AI/LLM i praktyczne wdrożenia. Robimy to dobrze i pod klienta: ustalamy materiał, audytorium (rola, branża, doświadczenie), czas/budżet, termin, zdalnie czy na miejscu. Robimy szkolenie tak, żeby uczestnicy się NAUCZYLI, a nie tylko wysłuchali. Jeśli pytanie dotyczy tego co robi potrzebuje.pl – odpowiadaj na podstawie tego kontekstu i na końcu dodaj: \"__PP_CANONICAL_CONTACT_TAIL__\".";
 
-$siteContextEn = "potrzebuje.pl: hands-on AI/LLM training and practical implementations. We tailor it to the client: we define the material, audience (role/industry/experience), time/budget, date, remote vs onsite. The goal is real learning, not a slide show. If the question is about what potrzebuje.pl does, answer using this context and end with: \"For details, please contact potrzebuje.pl by clicking the CONTACT button\".";
+$siteContextEn = "potrzebuje.pl: hands-on AI/LLM training and practical implementations. We tailor it to the client: we define the material, audience (role/industry/experience), time/budget, date, remote vs onsite. The goal is real learning, not a slide show. If the question is about what potrzebuje.pl does, answer using this context and end with: \"__PP_CANONICAL_CONTACT_TAIL__\".";
 
-$siteContextDe = "potrzebuje.pl: praxisnahe KI/LLM-Schulungen und praktische Umsetzungen. Kundenspezifisch: Inhalte, Zielgruppe (Rolle/Branche/Erfahrung), Zeit/Budget, Termin, remote vs vor Ort. Ziel ist echtes Lernen, nicht nur Folien. Wenn die Frage das Angebot von potrzebuje.pl betrifft, antworte anhand dieses Kontexts und ende mit: \"Für Details kontaktiere potrzebuje.pl bitte über den KONTAKT-Button\".";
+$siteContextDe = "potrzebuje.pl: praxisnahe KI/LLM-Schulungen und praktische Umsetzungen. Kundenspezifisch: Inhalte, Zielgruppe (Rolle/Branche/Erfahrung), Zeit/Budget, Termin, remote vs vor Ort. Ziel ist echtes Lernen, nicht nur Folien. Wenn die Frage das Angebot von potrzebuje.pl betrifft, antworte anhand dieses Kontexts und ende mit: \"__PP_CANONICAL_CONTACT_TAIL__\".";
 
 $siteContext = ($lang === 'de') ? $siteContextDe
              : (($lang === 'en') ? $siteContextEn : $siteContextPl);
+
+$contactTail = pp_i18n_t('generator.response.contact_tail', $lang);
+
+$siteContext = str_replace(
+    '__PP_CANONICAL_CONTACT_TAIL__',
+    $contactTail,
+    $siteContext
+);
 
 /**
  * Buduje system prompt zależny od języka, z jasnym opisem:
@@ -166,63 +174,65 @@ $siteContext = ($lang === 'de') ? $siteContextDe
  * - czego nie wolno (medycyna/prawo/finanse, nielegalne, erotyka, propaganda polityczna).
  * Pozwala na neutralne pytania faktograficzne (geografia, rola prezydenta itd.).
  */
-function build_system_prompt($lang, $maxWords, $maxBullets, $siteContext){
-  if ($lang === 'de') {
-    return
-      "Du bist der Assistent auf der Website potrzebuje.pl.\n" .
-      "Antwortsprache: Deutsch.\n" .
-      "Stil: kurz, konkret, maximal " . $maxWords . " Wörter, am besten in höchstens " . $maxBullets . " Bulletpoints.\n" .
-      "\n" .
-      "WAS IST ERLAUBT:\n" .
-      "- Neutrale Faktenfragen (z.B. wo ein Land liegt, was die Rolle eines Präsidenten ist).\n" .
-      "- Fragen zu KI/LLM, Schulungen und dem Angebot von potrzebuje.pl (hier nutze den bereitgestellten Seitenkontext).\n" .
-      "\n" .
-      "WAS IST NICHT ERLAUBT:\n" .
-      "- Medizinische, rechtliche oder finanzielle Beratung.\n" .
-      "- Illegale Inhalte, politische Propaganda oder parteipolitische Überzeugungsarbeit.\n" .
-      "- Erotische Inhalte.\n" .
-      "\n" .
-      "Wenn die Frage hauptsächlich nach einer persönlichen Meinung, Wahlentscheidung oder politischer Überzeugungsarbeit fragt, lehne kurz ab.\n\n" .
-      $siteContext;
-  }
+function pp_ai_language_profile($lang){
+  static $profiles = [
+    'pl' => ['output_language' => 'Polish'],
+    'en' => ['output_language' => 'English'],
+    'de' => ['output_language' => 'German'],
+    'fr' => ['output_language' => 'French'],
+    'zh' => ['output_language' => 'Chinese'],
+    'hi' => ['output_language' => 'Hindi'],
+  ];
 
-  if ($lang === 'en') {
-    return
-      "You are the assistant on the potrzebuje.pl website.\n" .
-      "Response language: English.\n" .
-      "Style: concise, concrete, max " . $maxWords . " words, preferably in up to " . $maxBullets . " bullet points.\n" .
-      "\n" .
-      "ALLOWED:\n" .
-      "- Neutral factual questions (e.g. where a country is located, what the role of a president is).\n" .
-      "- Questions about AI/LLM, training, and the offer of potrzebuje.pl (here use the provided site context).\n" .
-      "\n" .
-      "NOT ALLOWED:\n" .
-      "- Medical, legal, or financial advice.\n" .
-      "- Illegal content, political propaganda, or party-political persuasion.\n" .
-      "- Erotic content.\n" .
-      "\n" .
-      "If the question mainly asks for personal political opinions or how to vote, refuse briefly.\n\n" .
-      $siteContext;
-  }
-
-  // domyślnie: polski
-  return
-    "Jesteś asystentem na stronie potrzebuje.pl.\n" .
-    "Język odpowiedzi: polski.\n" .
-    "Styl: krótko, konkretnie, maksymalnie " . $maxWords . " słów, najlepiej w maksymalnie " . $maxBullets . " punktach.\n" .
-    "\n" .
-    "DOZWOLONE:\n" .
-    "- Proste pytania faktograficzne (np. gdzie leży dane państwo, na czym polega rola prezydenta).\n" .
-    "- Pytania o AI/LLM, szkolenia oraz ofertę potrzebuje.pl (tu korzystaj z kontekstu strony).\n" .
-    "\n" .
-    "NIEDOZWOLONE:\n" .
-    "- Porady medyczne, prawne lub finansowe.\n" .
-    "- Treści nielegalne, propaganda polityczna, nakłanianie do głosowania na konkretne opcje.\n" .
-    "- Treści erotyczne.\n" .
-    "\n" .
-    "Jeśli pytanie dotyczy głównie opinii politycznych, agitacji albo sporów partyjnych – odmów krótko.\n\n" .
-    $siteContext;
+  return isset($profiles[$lang]) ? $profiles[$lang] : $profiles['pl'];
 }
+
+function pp_ai_compression_prompt($lang, $maxWords){
+  $profile = pp_ai_language_profile($lang);
+  $outputLanguage = $profile['output_language'];
+
+  return
+    "Shorten the answer to at most " . $maxWords . " words while preserving its meaning. " .
+    "Output only in " . $outputLanguage . ". " .
+    "The page language is the only source of truth for output language. " .
+    "Do not infer or switch output language from the user's question or from the answer being shortened. " .
+    "Do not add new facts. Do not output incomplete sentences or lists.";
+}
+
+function build_system_prompt($lang, $maxWords, $maxBullets, $siteContext){
+  $profile = pp_ai_language_profile($lang);
+  $outputLanguage = $profile['output_language'];
+
+  return
+    "You are a limited LLM module on the potrzebuje.pl website.\n" .
+    "Task: generate starting questions for a first conversation about AI, processes and software delivery.\n" .
+    "Important: use NO internet, NO RAG and no current external data.\n" .
+    "Do not provide a diagnosis. Generate questions only.\n\n" .
+
+    "Rules:\n" .
+    "- Do not recommend an implementation.\n" .
+    "- Do not choose tools, vendors or architecture.\n" .
+    "- Do not decide which service path is best.\n" .
+    "- Do not estimate price, timeline or promised results.\n" .
+    "- Do not perform an audit or create an implementation plan.\n" .
+    "- Do not provide medical, legal or financial advice.\n" .
+    "- Do not generate political, illegal or erotic content.\n\n" .
+
+    "Answer format, maximum " . $maxWords . " words:\n" .
+    "- Use five sections equivalent to People/Roles, Process, Data/Tools, Risks, Prepare before conversation.\n" .
+    "- Translate all section headings into the required output language.\n" .
+    "- Keep lists concise and complete.\n\n" .
+
+    "OUTPUT LANGUAGE CONTRACT:\n" .
+    "- Output only in " . $outputLanguage . ".\n" .
+    "- The page language is the only source of truth for output language.\n" .
+    "- Do not infer, select or switch output language from the user's question.\n" .
+    "- Translate all headings and prose into " . $outputLanguage . ".\n" .
+    "- Remain in " . $outputLanguage . " for the complete answer.\n\n" .
+
+    "Be concise, concrete and professional.";
+}
+
 
 $system = build_system_prompt($lang, DEMO_MAX_OUTPUT_WORDS, DEMO_STYLE_MAX_BULLETS, $siteContext);
 
@@ -256,7 +266,7 @@ curl_close($ch);
 
 if ($resp === false){
   log_demo_event('curl_error', $question, ['error' => $err]);
-  json_out(500, ['error' => pp_t('err_server', $lang) . ' (' . $err . ')']);
+  json_out(500, ['error' => pp_i18n_t('generator.error.connection', $lang)]);
 }
 
 $data = json_decode($resp, true);
@@ -265,19 +275,22 @@ if (!is_array($data)){
     'http_code' => $code,
     'raw'       => mb_substr($resp, 0, 500)
   ]);
-  json_out(500, ['error' => pp_t('err_server', $lang)]);
+  json_out(500, ['error' => pp_i18n_t('generator.error.server', $lang)]);
 }
 
 if ($code < 200 || $code >= 300){
-  // Map common auth/config errors clearly
-  $msg = $data['error']['message'] ?? ('HTTP ' . $code);
-  if ($code === 401 || $code === 403){
-    $msg = pp_t('err_api_key', $lang);
-  }
+  // Technical upstream detail remains in logs only.
+  $upstreamMsg = $data['error']['message'] ?? ('HTTP ' . $code);
+
+  $msg = ($code === 401 || $code === 403)
+    ? pp_i18n_t('generator.error.api_configuration', $lang)
+    : pp_i18n_t('generator.error.server', $lang);
+
   log_demo_event('http_error', $question, [
     'http_code' => $code,
-    'message'   => $msg,
+    'message'   => $upstreamMsg,
   ]);
+
   json_out(500, ['error' => $msg]);
 }
 
@@ -305,9 +318,7 @@ if ($answer === ''){
     'raw'        => $data,
   ]);
 
-  $answer = ($lang === 'de')
-    ? 'Keine Antwort.'
-    : (($lang === 'en') ? 'No answer.' : 'Brak odpowiedzi.');
+  $answer = pp_i18n_t('generator.error.no_answer', $lang);
 }
 
 // Enforce word limit WITHOUT blind truncation:
@@ -316,23 +327,10 @@ if ($answer === ''){
 if (count_words($answer) > DEMO_MAX_OUTPUT_WORDS){
 
   // 1) Prompt kompresujący zależny od języka
-  if ($lang === 'de') {
-    $compressSys =
-      "Kürze die Antwort so, dass sie maximal " . DEMO_MAX_OUTPUT_WORDS . " Wörter hat " .
-      "und die Frage weiterhin vollständig beantwortet. " .
-      "Sprache: Deutsch. Keine neuen Fakten. Keine abgebrochenen Listen oder unvollständigen Sätze.";
-  } elseif ($lang === 'en') {
-    $compressSys =
-      "Shorten the answer to at most " . DEMO_MAX_OUTPUT_WORDS . " words " .
-      "while still fully answering the question. " .
-      "Language: English. Do not add new facts. Do not output cut-off sentences or lists.";
-  } else {
-    // PL
-    $compressSys =
-      "Skróć odpowiedź do maksymalnie " . DEMO_MAX_OUTPUT_WORDS . " słów, " .
-      "tak aby nadal w pełni odpowiadała na pytanie. " .
-      "Język: polski. Nie dodawaj nowych faktów. Nie urywaj zdań ani list.";
-  }
+    $compressSys = pp_ai_compression_prompt(
+      $lang,
+      DEMO_MAX_OUTPUT_WORDS
+    );
 
   // 2) Drugi call do API – model skraca własną odpowiedź
   $compressPayload = [
@@ -341,7 +339,7 @@ if (count_words($answer) > DEMO_MAX_OUTPUT_WORDS){
       ['role' => 'system', 'content' => $compressSys],
       [
         'role'    => 'user',
-        'content' => "PYTANIE:\n" . $question . "\n\nODPOWIEDŹ DO SKRÓCENIA:\n" . $answer,
+        'content' => "USER QUESTION:\n" . $question . "\n\nANSWER TO SHORTEN:\n" . $answer,
       ],
     ],
     'max_output_tokens' => 250,
@@ -395,11 +393,11 @@ if (count_words($answer) > DEMO_MAX_OUTPUT_WORDS){
   // 3) Jeśli mimo wszystko dalej za długie – NIE ucinamy,
   // tylko prosimy użytkownika o bardziej konkretne pytanie.
   if (count_words($answer) > DEMO_MAX_OUTPUT_WORDS){
-    $answer = ($lang === 'de')
-      ? "Die Antwort ist zu lang für dieses Demo-Limit. Bitte stelle die Frage konkreter (1 Aspekt), dann antworte ich in max. " . DEMO_MAX_OUTPUT_WORDS . " Wörtern."
-      : (($lang === 'en')
-          ? "The answer is too long for this demo limit. Please ask a more specific question (one aspect) and I’ll answer within " . DEMO_MAX_OUTPUT_WORDS . " words."
-          : "Odpowiedź jest zbyt długa dla limitu demo. Zadaj bardziej konkretne pytanie (1 wątek), a odpowiem w max. " . DEMO_MAX_OUTPUT_WORDS . " słowach.");
+    $answer = str_replace(
+      '{max_words}',
+      (string) DEMO_MAX_OUTPUT_WORDS,
+      pp_i18n_t('generator.error.answer_too_long', $lang)
+    );
   }
 }
 

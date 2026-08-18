@@ -1,499 +1,157 @@
-# POTRZEBUJE.PL MASTER CONTEXT 
+# POTRZEBUJE.PL MASTER CONTEXT
 
-## 1. PROJECT IDENTITY
+Last Review Date: 18/08/2026
 
-Project Name:
-potrzebuje.pl
+## 1. Project identity
 
-Project Type:
-AI consulting, training, transformation and software development business website.
+Project: potrzebuje.pl
 
-Primary Goal:
-Acquire first paying customers and obtain first customer references.
+Purpose:
+practical AI consulting, training, transformation/process improvement and
+software-development services.
 
-Current Stage:
-Working website, pre-commercial growth stage.
+Primary business objective:
+acquire paying customers and build customer references.
 
-Project Owner:
-Tomasz
-
----
-
-## 2. BUSINESS PURPOSE
-
-Potrzebuje.pl exists to help organizations and professionals adopt Artificial Intelligence in practical business environments.
-
-The project is built around three strategic service pillars:
+## 2. Three strategic pillars
 
 ### Pillar A — AI Education & Training
 
-Services:
-
-* AI fundamentals
-* Prompt engineering
-* AI tools
-* Practical AI adoption
-* Remote training
-
-Target Groups:
-
-* managers
-* accountants
-* engineers
-* developers
-* SMEs
-* business professionals
+Practical AI adoption, AI fundamentals, prompt engineering, AI tools and
+role/industry-specific training.
 
 ### Pillar B — AI Transformation & Process Improvement
 
-Services:
-
-* process discovery
-* process analysis
-* process redesign
-* automation identification
-* AI integration
-* implementation planning
+Process discovery, analysis, redesign, automation identification,
+AI integration and implementation planning.
 
 ### Pillar C — Software Development
 
-Services:
+Custom applications, AI-assisted development, internal tools,
+automation solutions and software supporting transformation projects.
 
-* custom applications
-* AI-assisted development
-* internal tools
-* automation solutions
-* software supporting transformation projects
+Clients may enter through any pillar. No mandatory sequence exists.
 
-Important:
-Clients may enter through any pillar.
-There is no mandatory sequence between training, transformation and software development.
+## 3. Current website
 
----
+Current verified version:
 
-## 3. CURRENT BUSINESS OBJECTIVES
-
-Primary KPI:
-First paying customer.
-
-Secondary KPI:
-First customer references.
-
-12-Month Objectives:
-
-* acquire first customers
-* obtain references
-* expand portfolio
-* demonstrate AI capabilities
-* grow transformation offerings
-* grow software-development offerings
-
-Future Scaling:
-Only after obtaining successful customer references.
-
----
-
-## 4. TARGET AUDIENCE
-
-Primary:
-
-* managers
-* accountants
-* engineers
-* developers
-* SMEs
-* professionals interested in AI adoption
-
-Secondary:
-
-* companies seeking AI transformation
-* organizations requiring custom software solutions
-
----
-
-## 5. MAIN WEBSITE
-
-Production Path:
-
-/home/potrzebuje/public_html
-
-Main Files:
-
-index.php
-nav.php
-contact.php
-config.php
-demo_api.php
+`/home/potrzebuje/public_html/3pillars`
 
 Languages:
 
-* Polish
-* English
-* German
+PL / EN / DE / FR / ZH / HI.
 
-Language Directories:
+Architecture:
 
-/en
-/de
+thin language wrappers
+→ shared template
+→ canonical i18n
+→ shared frontend/backend behavior.
 
-Purpose:
+See `THREE_PILLARS_CURRENT_STATE.md`.
 
-* business presentation
-* service presentation
-* lead generation
-* contact channel
-* AI capability showcase
+## 4. Hosting
 
----
+Shared cPanel hosting.
 
-## 6. HOSTING
+Web server: LiteSpeed.
 
-Hosting Provider:
+Important constraints:
+- no root access,
+- no Docker/systemd-level infrastructure control,
+- production is not a Git checkout,
+- diagnostics must respect cPanel/shared-hosting limitations.
 
-WEBMEDIA EUROPE LTD
+## 5. GitHub and deployment
 
-Environment:
+Main website repository:
 
-Shared hosting
+`TomKazPoland/potrzebuje-pl`
 
-Management:
+Local clone:
 
-cPanel
+`/home/potrzebuje/Projects/GitHub_Repos/potrzebuje-pl`
 
-Web Server:
+Architectural principle:
+production and repositories remain separated.
 
-LiteSpeed
+During AP-09 reconciliation CURRENT `/3pillars` is the authoritative
+product baseline.
 
-Important Limitation:
+After successful repository synchronization and deployment-contract
+verification, GitHub `main` becomes the normal Source of Truth again.
 
-No root access.
+## 6. Security
 
-No full server control.
+Secrets remain outside `public_html`.
 
-Terminal access only through cPanel Terminal.
+Never commit:
+- API keys,
+- passwords,
+- tokens,
+- private SSH material,
+- runtime databases,
+- runtime logs,
+- user-input logs,
+- counters.
 
-Some diagnostics require hosting provider support.
+Never expose secret contents in diagnostics or documentation.
 
----
+## 7. AI demo
 
-## 7. GITHUB
+The AI demo is part of the main website capability showcase.
 
-Main Repository:
+Deterministic UI/API text is centralized through i18n.
 
-https://github.com/TomKazPoland/potrzebuje-pl
+Free-form LLM answers remain dynamic.
 
-Branch:
+Limits are enforced by current backend/runtime code and must be verified
+from CURRENT code rather than stale documentation values.
 
-main
+## 8. Additional applications
 
-Local Repository Clone:
+Alpha Analyzer and Anonymous are separate demonstration/application
+projects with dedicated repositories/runtime assets.
 
-/home/potrzebuje/Projects/GitHub_Repos/potrzebuje-pl
+They are not part of the main `/3pillars` source tree.
 
-Production Directory:
+Their production databases and runtime files are not committed to this
+repository.
 
-/home/potrzebuje/public_html
+## 9. Recovery philosophy
 
-Important:
+Recovery planning covers:
+- domain,
+- hosting,
+- Git repositories,
+- secrets/configuration,
+- email,
+- databases,
+- documentation,
+- backups.
 
-Production directory is NOT a Git checkout.
+## 10. Architectural principles
 
----
+Preserve unless strong evidence justifies change:
 
-## 8. DEPLOYMENT
-
-Current Deployment Model:
-
-GitHub
-→ GitHub Actions
-→ SFTP
-→ public_html
-
-Workflow:
-
-.github/workflows/deploy.yml
-
-Important:
-
-public_html does not contain .git.
-
-GitHub is the source of truth.
-
----
-
-## 9. OPENAI / AI DEMO
-
-Provider:
-
-OpenAI
-
-Current Model:
-
-gpt-4o-mini
-
-Production Secret Location:
-
-/home/potrzebuje/Projects/Secrets/chatgpt.php
-
-Rules:
-
-* secrets outside public_html
-* secrets never committed to repositories
-* single source of truth
-* controlled usage
-
-AI Demo Flow:
-
-User
-→ demo_api.php
-→ config.php
-→ chatgpt.php
-→ OpenAI
-→ JSON response
-
----
-
-## 10. AI DEMO LIMITS
-
-Current Limits:
-
-Input:
-20 words
-
-Output:
-100 words
-
-Daily Requests:
-100 per IP
-
-Translations:
-10
-
-Allowed Languages:
-pl
-en
-de
-
-Blocked Topics:
-
-* medical
-* legal
-* financial advice
-* illegal activities
-* political content
-* erotic content
-
----
-
-## 11. SECURITY MODEL
-
-Core Principles:
-
-* secrets outside public_html
-* GitHub without secrets
-* OpenAI credentials isolated
-* deployment through GitHub Actions
-* logging without secrets
-
-Secrets Location:
-
-/home/potrzebuje/Projects/Secrets
-
-Current Secret File:
-
-chatgpt.php
-
----
-
-## 12. LOGGING
-
-Main Logs:
-
-/home/potrzebuje/public_html/logs
-
-AI Demo Input Log:
-
-demo_user_inputs.log
-
-Additional Logs:
-deployment
-diagnostics
-application logs
-
----
-
-## 13. ADDITIONAL APPLICATIONS
-
-The following applications are intentionally separated from the main website.
-
-They are demonstrations of capabilities rather than core business systems.
-
-### Alpha Analyzer
-
-Purpose:
-Investment and fund analysis platform.
-
-Technology:
-Flask
-SQLite
-OpenAI
-
-Repository:
-Dedicated repository.
-
-Database:
-alpha_analyzer.db
-
-Status:
-Operational.
-
-### Anonymous
-
-Purpose:
-Anonymization benchmark and analysis platform.
-
-Technology:
-Python
-SQLite
-
-Repository:
-TomKazPoland/app_anonymous
-
-Database:
-mapping.db
-
-Status:
-Operational.
-
----
-
-## 14. DIRECTORY STRUCTURE
-
-Main Website:
-
-/home/potrzebuje/public_html
-
-Applications:
-
-/home/potrzebuje/Projects/alpha_analyzer
-/home/potrzebuje/Projects/anonymous_app
-
-Repositories:
-
-/home/potrzebuje/Projects/GitHub_Repos
-
-Secrets:
-
-/home/potrzebuje/Projects/Secrets
-
-Server Only Assets:
-
-/home/potrzebuje/Projects/Server_Only
-
----
-
-## 15. DATABASES
-
-Alpha Analyzer:
-
-alpha_analyzer.db
-
-Anonymous:
-
-mapping.db
-
-Important:
-
-Databases are production assets and must be included in backup strategy.
-
----
-
-## 16. OWNERSHIP
-
-Controlled Directly By Project Owner:
-
-* domain
-* GitHub
-* OpenAI account
-* project email accounts
-
-Hosting:
-
-Managed service provided by WEBMEDIA EUROPE LTD.
-
----
-
-## 17. RECOVERY PHILOSOPHY
-
-All critical assets are considered equally important:
-
-* domain
-* hosting
-* GitHub repositories
-* OpenAI configuration
-* email accounts
-* production databases
-* documentation
-* backups
-
-Recovery planning assumes full-environment restoration.
-
----
-
-## 18. ARCHITECTURAL PRINCIPLES
-
-Do not change without strong justification:
-
-1. Secrets outside public_html.
-2. Separation of demo applications from main website.
-3. GitHub as source of truth.
-4. Deployment through GitHub Actions.
-5. Production environment isolated from repositories.
-
-Allowed Future Changes:
-
-* hosting migration
-* OpenAI provider replacement
-* deployment improvements
-
----
-
-## 19. ROADMAP
-
-Current Focus:
-
-1. First paying customers.
-2. First references.
-3. Portfolio expansion.
-
-Future Focus:
-
-1. AI Training.
-2. AI Transformation.
-3. Software Development.
-
-Website Evolution:
-
-The website should gradually reflect all three business pillars more clearly.
-
----
-
-## 20. QUICK START FOR NEW CHATGPT THREAD
-
-Before proposing changes:
-
-1. Understand that potrzebuje.pl is the primary project.
-2. Alpha Analyzer and Anonymous are supporting demonstration applications.
-3. Use SURE methodology.
-4. Validate against production state.
-5. Assume shared-hosting limitations.
-6. Preserve secrets isolation.
-7. Preserve GitHub deployment flow.
-8. Prioritize customer acquisition and references.
-9. Respect three service pillars:
-
-   * AI Training
-   * AI Transformation
-   * Software Development
-10. Never assume undocumented infrastructure.
-
+1. secrets outside public web roots;
+2. application/repository separation;
+3. one shared template for structurally identical language pages;
+4. canonical i18n for deterministic text;
+5. thin language wrappers;
+6. deployment through a verified version-controlled workflow;
+7. backup and rollback before risky changes;
+8. current code + diagnostics + state before historical assumptions.
+
+## 11. Quick start for future work
+
+Before changing the project:
+- read `README.md`;
+- read `doc/THREE_PILLARS_CURRENT_STATE.md`;
+- read `doc/POTRZEBUJE.PL_OPERATIONS.md`;
+- read `RUNBOOK.md`;
+- use `doc/Methodologies_to_be_followed.txt`;
+- verify CURRENT runtime;
+- preserve secrets isolation;
+- do not perform `/3pillars/ → /` cutover without an explicit release AP.

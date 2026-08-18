@@ -1,374 +1,174 @@
-# POTRZEBUJE.PL OPERATIONS GUIDE v1
+# POTRZEBUJE.PL OPERATIONS GUIDE
 
-## 1. PURPOSE
+Last Review Date: 18/08/2026
 
-This document describes how the potrzebuje.pl ecosystem is operated, deployed, backed up, restored and maintained.
+## 1. Purpose
 
-This document complements:
+Operational guide for deployment, backup, restore, maintenance and
+recovery of potrzebuje.pl.
 
-POTRZEBUJE.PL_MASTER_CONTEXT.md
+MASTER_CONTEXT describes what the project is.
 
-MASTER_CONTEXT explains what the project is.
+OPERATIONS describes how it is operated.
 
-OPERATIONS explains how the project is managed.
+RUNBOOK provides the short execution checklist.
 
----
+## 2. Environment
 
-# 2. ENVIRONMENT OVERVIEW
+Current three-pillars production:
 
-Main Production Website:
+`/home/potrzebuje/public_html/3pillars`
 
-/home/potrzebuje/public_html
+Local Git repository:
 
-Main Git Repository:
-
-/home/potrzebuje/Projects/GitHub_Repos/potrzebuje-pl
-
-GitHub Repository:
-
-https://github.com/TomKazPoland/potrzebuje-pl
-
-Secrets:
-
-/home/potrzebuje/Projects/Secrets
-
-Server Only Assets:
-
-/home/potrzebuje/Projects/Server_Only
+`/home/potrzebuje/Projects/GitHub_Repos/potrzebuje-pl`
 
 Logs:
 
-/home/potrzebuje/public_html/logs
+`/home/potrzebuje/public_html/logs`
 
----
+Secrets are stored outside the public web tree.
 
-# 3. HOSTING
-
-Provider:
-
-WEBMEDIA EUROPE LTD
+## 3. Hosting
 
 Environment:
+- shared hosting,
+- cPanel,
+- LiteSpeed,
+- Passenger available for supported Python applications,
+- no root-level infrastructure management.
 
-Shared Hosting
+## 4. Deployment model
 
-Control Panel:
-
-cPanel
-
-Web Server:
-
-LiteSpeed
-
-Python Support:
-
-Passenger
-
-Terminal:
-
-cPanel Terminal
-
-Important Limitations:
-
-* no root access
-* no direct server administration
-* limited diagnostics
-* limited SSH capabilities
-* some issues require hosting provider support
-
----
-
-# 4. DEPLOYMENT FLOW
-
-Current deployment model:
+Desired normal model after AP-09:
 
 Developer
 → GitHub
-→ GitHub Actions
+→ verified GitHub Actions deployment
 → SFTP
-→ Production
+→ production.
 
-Repository:
+Production is a deployment target, not a Git checkout.
 
-TomKazPoland/potrzebuje-pl
+Important transition state:
 
-Branch:
+during AP-09, current `/3pillars` is newer than the old GitHub baseline
+and is therefore the authoritative product source until synchronization
+completes.
 
-main
+Automatic deployment remains locked until AP9.4 verifies exact target,
+source scope and rollback.
 
-Workflow:
+## 5. GitHub structure
 
-.github/workflows/deploy.yml
+Main website repository:
+`TomKazPoland/potrzebuje-pl`
 
-Important:
+Dedicated application repositories remain separate.
 
-Production directory does not contain .git.
+Documentation belongs in GitHub.
 
-Production is deployment target only.
+Runtime assets do not.
 
-GitHub remains source of truth.
+## 6. OpenAI operations
 
----
+OpenAI credentials/configuration remain outside public_html and outside
+GitHub.
 
-# 5. GITHUB STRUCTURE
+Never print, copy, hash or expose secret contents during diagnostics.
 
-Main Website:
+## 7. Logging
 
-TomKazPoland/potrzebuje-pl
+Operational/diagnostic logs are runtime data.
 
-Additional Projects:
+They do not belong in the Git repository.
 
-TomKazPoland/alpha_analyzer
+User-input logs may contain user-provided content and must not be exposed.
 
-TomKazPoland/app_anonymous
+Never log credentials.
 
-Local Repository Clones:
+## 8. Backup strategy
 
-/home/potrzebuje/Projects/GitHub_Repos
+Before risky changes:
+1. identify affected product files;
+2. create exact backup/snapshot;
+3. record hashes/state;
+4. confirm rollback path;
+5. apply minimal change;
+6. verify;
+7. retain recovery evidence until release is stable.
 
----
+Critical ecosystem assets include:
+domain, hosting, Git repositories, secrets/configuration, email,
+databases, documentation and backups.
 
-# 6. OPENAI OPERATIONS
+## 9. Restore strategy
 
-Current Provider:
+Typical full-environment order:
 
-OpenAI
+1. recover hosting access;
+2. recover domain configuration;
+3. recover repositories;
+4. recover secret/configuration assets securely;
+5. recover production databases;
+6. deploy applications;
+7. validate website/application behavior;
+8. validate AI integrations;
+9. validate Contact;
+10. validate logs/monitoring.
 
-Current Model:
+## 10. Change management
 
-gpt-4o-mini
-
-Production Secret:
-
-/home/potrzebuje/Projects/Secrets/chatgpt.php
-
-Important Rules:
-
-* never expose API key
-* never commit API key
-* never move secrets into public_html
-* use single source of truth
-
----
-
-# 7. LOGGING
-
-Main Logs:
-
-/home/potrzebuje/public_html/logs
-
-Input Logs:
-
-demo_user_inputs.log
-
-Operational Logs:
-
-deployment logs
-diagnostic logs
-application logs
-
-Rule:
-
-Never log secrets.
-
----
-
-# 8. BACKUP STRATEGY
-
-Critical Assets:
-
-1. Domain configuration
-2. Hosting account
-3. GitHub repositories
-4. OpenAI configuration
-5. Email accounts
-6. Databases
-7. Documentation
-8. Historical backups
-
-Production Backup Sources:
-
-GitHub repositories
-
-Server backups
-
-ZIP archives
-
-Database copies
-
-Documentation
-
----
-
-# 9. RESTORE STRATEGY
-
-Restore Order:
-
-Step 1:
-Recover hosting access.
-
-Step 2:
-Recover domain configuration.
-
-Step 3:
-Recover GitHub repositories.
-
-Step 4:
-Recover Secrets directory.
-
-Step 5:
-Recover production databases.
-
-Step 6:
-Deploy applications.
-
-Step 7:
-Validate functionality.
-
-Step 8:
-Validate OpenAI integration.
-
-Step 9:
-Validate contact forms.
-
-Step 10:
-Validate logs and monitoring.
-
----
-
-# 10. APPLICATION INVENTORY
-
-Primary Application:
-
-potrzebuje.pl
-
-Purpose:
-
-Business website.
-
-Status:
-
-Production.
-
----
-
-Additional Application:
-
-Alpha Analyzer
-
-Purpose:
-
-Investment analytics platform.
-
-Status:
-
-Operational.
-
----
-
-Additional Application:
-
-Anonymous
-
-Purpose:
-
-Anonymization benchmark platform.
-
-Status:
-
-Operational.
-
----
-
-# 11. KNOWN LIMITATIONS
-
-Shared hosting environment.
-
-No root access.
-
-No direct infrastructure control.
-
-Production troubleshooting may require hosting provider involvement.
-
-No Git repository inside production public_html.
-
-Some diagnostics are restricted by cPanel environment.
-
----
-
-# 12. CHANGE MANAGEMENT
-
-Before major changes:
-
-1. Create backup.
-2. Verify rollback path.
-3. Verify deployment path.
-4. Verify secrets handling.
-5. Verify database impact.
-
-After changes:
-
-1. Verify application.
-2. Verify logs.
-3. Verify OpenAI integration.
-4. Verify contact functionality.
-5. Verify deployment state.
-
----
-
-# 13. SURE METHODOLOGY
-
-All future work should follow:
+Use:
 
 DIAG
-→ ROOT CAUSE
-→ PATCH
+→ root cause
+→ isolated BUILD where applicable
+→ checkpoint
+→ backup
+→ APPLY
+→ VERIFY
+→ rollback on failure.
 
-Rules:
+Do not patch historical symptoms when current architecture already
+provides the function centrally.
 
-* no guessing
-* verify runtime
-* verify production state
-* rollback ready
-* minimal change principle
-* validate side effects
+## 11. Three-pillars verification minimum
 
----
+For relevant website changes verify:
+- PHP lint,
+- PL/EN/DE/FR/ZH/HI,
+- HTTP,
+- canonical i18n markers/parity,
+- shared-template behavior,
+- navigation/routing,
+- generator,
+- Contact,
+- SEO/meta where affected,
+- responsive behavior where affected,
+- runtime errors,
+- hashes for files expected to remain unchanged.
 
-# 14. FUTURE OPERATIONS IMPROVEMENTS
-
-Potential future improvements:
-
-* hosting migration
-* automated backup inventory
-* centralized documentation
-* deployment validation scripts
-* monitoring improvements
-* disaster recovery testing
-
----
-
-# 15. EMERGENCY RECOVERY CHECKLIST
+## 12. Emergency recovery
 
 If production fails:
+1. stop further deployment;
+2. determine CURRENT state;
+3. inspect runtime logs without exposing secrets;
+4. identify last verified source state;
+5. restore from controlled backup if required;
+6. verify six languages;
+7. verify generator;
+8. verify Contact;
+9. verify dependent applications;
+10. document root cause and non-detection cause.
 
-1. Verify hosting status.
-2. Verify domain resolution.
-3. Verify cPanel access.
-4. Verify GitHub access.
-5. Verify Secrets directory.
-6. Verify databases.
-7. Verify deployment workflow.
-8. Verify OpenAI integration.
-9. Verify logs.
-10. Verify business-critical pages.
+## 13. Deployment lock during AP-09
 
-Success criteria:
+A push to main must not automatically overwrite current production until
+AP9.4 deployment scope is proven.
 
-Website operational.
-AI Demo operational.
-Contact operational.
-Applications accessible.
-Logs functioning.
-Documentation available.
+The repository therefore contains a non-deploying lock workflow during
+this transition.
 
+Old workflow evidence is retained under `doc/history/`.

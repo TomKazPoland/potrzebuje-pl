@@ -1,3 +1,3 @@
 <?php
-$currentLang = 'de';
+$currentLang = 'hi';
 require __DIR__ . '/../inc/landing_template.php';

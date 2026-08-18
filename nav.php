@@ -1,47 +1,73 @@
 <?php
-// nav.php — wspólne menu dla wszystkich języków (PL / EN / DE)
+// nav.php — wspólne menu dla wszystkich języków (PL / EN / DE / FR / ZH / HI)
 
-// Oczekujemy, że w pliku wywołującym będzie ustawione $lang = 'pl' / 'en' / 'de'.
+// Oczekujemy, że w pliku wywołującym będzie ustawione $lang = 'pl' / 'en' / 'de' / 'fr' / 'zh' / 'hi'.
 if (!isset($lang)) {
     $lang = 'pl';
 }
-if (!in_array($lang, ['pl','en','de'], true)) {
+
+if (!in_array($lang, ['pl','en','de','fr','zh','hi'], true)) {
     $lang = 'pl';
 }
 
 // Tłumaczenia etykiet menu
 $NAV_T = [
     'pl' => [
-        'offer'   => 'Oferta',
-        'demo'    => 'Mini-demo AI',
-        'about'   => 'O nas',
+        'offer' => 'Oferta',
+        'demo' => 'Generator',
+        'about' => 'Jak pracujemy',
         'contact' => 'Kontakt',
     ],
     'en' => [
-        'offer'   => 'Offer',
-        'demo'    => 'Mini AI demo',
-        'about'   => 'About',
+        'offer' => 'Offer',
+        'demo' => 'Generator',
+        'about' => 'How we work',
         'contact' => 'Contact',
     ],
     'de' => [
-        'offer'   => 'Angebot',
-        'demo'    => 'Mini-AI-Demo',
-        'about'   => 'Über uns',
+        'offer' => 'Angebot',
+        'demo' => 'Generator',
+        'about' => 'Arbeitsweise',
         'contact' => 'Kontakt',
+    ],
+    'fr' => [
+        'offer' => 'Offre',
+        'demo' => 'Générateur',
+        'about' => 'Méthode',
+        'contact' => 'Contact',
+    ],
+    'zh' => [
+        'offer' => '服务',
+        'demo' => '问题生成器',
+        'about' => '工作方式',
+        'contact' => '联系',
+    ],
+    'hi' => [
+        'offer' => 'सेवाएँ',
+        'demo' => 'प्रश्न जनरेटर',
+        'about' => 'कार्य पद्धति',
+        'contact' => 'संपर्क',
     ],
 ];
 
 $nav = $NAV_T[$lang] ?? $NAV_T['pl'];
 
-// Ścieżki do wersji językowych (zakładamy: / , /en/ , /de/)
+// Ścieżki do wersji językowych.
+// W preview /3pillars linki zostają w /3pillars.
+// W produkcji prefix jest pusty i linki prowadzą do roota domeny.
+$requestUri = $_SERVER['REQUEST_URI'] ?? '';
+$prefix = (strpos($requestUri, '/3pillars') === 0) ? '/3pillars' : '';
+
 $langPaths = [
-    'pl' => '/index.php',
-    'en' => '/en/index.php',
-    'de' => '/de/index.php',
+    'pl' => $prefix . '/index.php',
+    'en' => $prefix . '/en/index.php',
+    'de' => $prefix . '/de/index.php',
+    'fr' => $prefix . '/fr/index.php',
+    'zh' => $prefix . '/zh/index.php',
+    'hi' => $prefix . '/hi/index.php',
 ];
 
-
-$contactHref = '/contact.php?lang=' . $lang;
+$contactHref = $prefix . '/contact.php?lang=' . rawurlencode($lang);
 
 // Helper do escapu
 if (!function_exists('h')) {
@@ -59,7 +85,7 @@ if (!function_exists('h')) {
       <div class="nav-links">
         <a class="nav-link" href="#oferta"><?=h($nav['offer'])?></a>
         <a class="nav-link" href="#demo"><?=h($nav['demo'])?></a>
-        <a class="nav-link" href="#o-nas"><?=h($nav['about'])?></a>
+        <a class="nav-link" href="#top"><?=h($nav['about'])?></a>
         <!-- Kontakt – wersja desktop -->
         <a class="nav-link nav-cta nav-cta-desktop" href="<?=h($contactHref)?>"><?=h($nav['contact'])?></a>
       </div>
@@ -85,6 +111,24 @@ if (!function_exists('h')) {
           href="<?=h($langPaths['de'])?>"
           <?= $lang === 'de' ? 'aria-current="page"' : '' ?>
         >DE</a>
+
+        <a
+          class="nav-lang"
+          href="<?=h($langPaths['fr'])?>"
+          <?= $lang === 'fr' ? 'aria-current="page"' : '' ?>
+        >FR</a>
+
+        <a
+          class="nav-lang"
+          href="<?=h($langPaths['zh'])?>"
+          <?= $lang === 'zh' ? 'aria-current="page"' : '' ?>
+        >ZH</a>
+
+        <a
+          class="nav-lang"
+          href="<?=h($langPaths['hi'])?>"
+          <?= $lang === 'hi' ? 'aria-current="page"' : '' ?>
+        >HI</a>
       </div>
 
       <!-- Kontakt – wersja mobilna -->

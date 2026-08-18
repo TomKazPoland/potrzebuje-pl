@@ -1,63 +1,55 @@
 <?php
-// contact.php — multilingual contact form (PL/EN/DE)
+// contact.php — multilingual contact form (PL/EN/DE/FR/ZH/HI)
 require_once __DIR__ . '/config.php';
+require_once __DIR__ . '/inc/i18n_runtime.php';
 
-$lang = pp_lang_from_request('pl');
+$requestedLang = isset($_GET['lang'])
+  ? strtolower(trim((string)$_GET['lang']))
+  : '';
 
-$T = [
-  'pl' => [
-    'back' => 'Powrót na stronę główną',
-    'title' => 'Kontakt',
-    'lead' => 'Wypełnij formularz, aby wysłać zapytanie lub komentarz. Pola oznaczone * są obowiązkowe.',
-    'email' => 'Email Nadawcy',
-    'subject' => 'Temat',
-    'message' => 'Treść Zapytania/Komentarza',
-    'send' => 'Wyślij',
-    'ok' => 'Dziękujemy! Wiadomość została wysłana.',
-    'err_required' => 'Wszystkie pola oznaczone jako obowiązkowe muszą być wypełnione.',
-    'err_email' => 'Adres e-mail nadawcy jest nieprawidłowy.',
-    'err_send' => 'Błąd wysyłki wiadomości. Spróbuj ponownie później.',
-    // NOWE: WhatsApp
-    'whatsapp_intro' => 'Możesz też napisać do nas na WhatsApp:',
-    'whatsapp_label' => 'Napisz na WhatsApp',
-  ],
-  'en' => [
-    'back' => 'Back to homepage',
-    'title' => 'Contact',
-    'lead' => 'Fill in the form to send a question or comment. Fields marked with * are required.',
-    'email' => 'Sender Email',
-    'subject' => 'Subject',
-    'message' => 'Message',
-    'send' => 'Send',
-    'ok' => 'Thank you! Your message has been sent.',
-    'err_required' => 'Please fill in all required fields.',
-    'err_email' => 'Sender email address is invalid.',
-    'err_send' => 'Message could not be sent. Please try again later.',
-    // NEW: WhatsApp
-    'whatsapp_intro' => 'You can also contact us via WhatsApp:',
-    'whatsapp_label' => 'Message us on WhatsApp',
-  ],
-  'de' => [
-    'back' => 'Zurück zur Startseite',
-    'title' => 'Kontakt',
-    'lead' => 'Fülle das Formular aus, um eine Anfrage oder einen Kommentar zu senden. Felder mit * sind Pflichtfelder.',
-    'email' => 'E-Mail Absender',
-    'subject' => 'Betreff',
-    'message' => 'Nachricht',
-    'send' => 'Senden',
-    'ok' => 'Danke! Die Nachricht wurde gesendet.',
-    'err_required' => 'Bitte alle Pflichtfelder ausfüllen.',
-    'err_email' => 'Die E-Mail-Adresse ist ungültig.',
-    'err_send' => 'Senden fehlgeschlagen. Bitte später erneut versuchen.',
-    // NEU: WhatsApp
-    'whatsapp_intro' => 'Du kannst uns auch per WhatsApp erreichen:',
-    'whatsapp_label' => 'Schreib uns auf WhatsApp',
-  ],
+if ($requestedLang === '') {
+  $uri = $_SERVER['REQUEST_URI'] ?? '';
+
+  if (
+    preg_match(
+      '#/(en|de|fr|zh|hi)/#',
+      $uri,
+      $langMatch
+    )
+  ) {
+    $requestedLang = $langMatch[1];
+  }
+}
+
+$lang = pp_i18n_normalize_lang(
+  $requestedLang !== '' ? $requestedLang : 'pl',
+  'pl'
+);
+
+$pageTitle = pp_i18n_t('contact.page.title', $lang);
+$backText = pp_i18n_t('contact.back_home', $lang);
+
+$titleText = preg_replace(
+  '/^potrzebuje\.pl\s+—\s+/u',
+  '',
+  $pageTitle
+);
+
+$tr = [
+  'title' => $titleText,
+  'lead' => pp_i18n_t('contact.form.intro', $lang),
+  'email' => pp_i18n_t('contact.sender_email.label', $lang),
+  'subject' => pp_i18n_t('contact.subject.label', $lang),
+  'message' => pp_i18n_t('contact.message.label', $lang),
+  'send' => pp_i18n_t('contact.submit', $lang),
+  'ok' => pp_i18n_t('contact.success', $lang),
+  'err_required' => pp_i18n_t('contact.error.required', $lang),
+  'err_email' => pp_i18n_t('contact.error.invalid_email', $lang),
+  'err_send' => pp_i18n_t('contact.error.send_failed', $lang),
+  'whatsapp_intro' => pp_i18n_t('contact.whatsapp.intro', $lang),
+  'whatsapp_label' => pp_i18n_t('contact.whatsapp.cta', $lang),
 ];
-
-$tr = $T[$lang] ?? $T['pl'];
-
-$to = "potrzebuje.pl@gmail.com"; // destination inbox
+$to = pp_i18n_t('contact.email.address', $lang);
 
 $successMessage = "";
 $errorMessage   = "";
@@ -103,25 +95,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 function h($s){ return htmlspecialchars($s ?? "", ENT_QUOTES, "UTF-8"); }
 
 // homepage target per language
-$home = ($lang === 'de') ? '/de/' : (($lang === 'en') ? '/en/' : '/');
-
+$home = ($lang === 'pl') ? '/' : '/' . $lang . '/';
 // KONFIGURACJA WHATSAPP – PODMIEŃ NA SWÓJ NUMER
 $whatsNumber  = '48601201900';        // numer do URL, np. 48501234567 (BEZ spacji)
 $whatsDisplay = '+48 601 201 900';    // jak ma się wyświetlać użytkownikowi
 
-$whatsText = [
-  'pl' => 'Dzień dobry, piszę z potrzebuje.pl',
-  'en' => 'Hello, I am writing from potrzebuje.pl',
-  'de' => 'Guten Tag, ich schreibe von potrzebuje.pl',
-];
-$whatsTextCurrent = $whatsText[$lang] ?? $whatsText['pl'];
+$whatsTextCurrent = pp_i18n_t('contact.whatsapp.prefill', $lang);
 
 ?><!DOCTYPE html>
 <html lang="<?=h($lang)?>">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>potrzebuje.pl — <?=h($tr['title'])?></title>
+  <title><?=h($pageTitle)?></title>
   <style>
     *{box-sizing:border-box;margin:0;padding:0}
     body{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f7f7f7;color:#111}
@@ -160,7 +146,7 @@ $whatsTextCurrent = $whatsText[$lang] ?? $whatsText['pl'];
 </head>
 <body>
   <div class="page">
-    <a href="<?=h($home)?>">← <?=h($tr['back'])?></a>
+    <a href="<?=h($home)?>"><?=h($backText)?></a>
 
     <div class="card">
       <h1><?=h($tr['title'])?></h1>
@@ -176,13 +162,13 @@ $whatsTextCurrent = $whatsText[$lang] ?? $whatsText['pl'];
 
       <form method="POST" action="contact.php?lang=<?=h($lang)?>">
         <label><?=h($tr['email'])?> *</label>
-        <input type="email" name="sender_email" required value="<?=h($_POST["sender_email"] ?? "")?>"/>
+        <input type="email" name="sender_email" required data-validation-required="<?=h($tr['err_required'])?>" data-validation-email="<?=h($tr['err_email'])?>" value="<?=h($_POST["sender_email"] ?? "")?>"/>
 
         <label><?=h($tr['subject'])?> *</label>
-        <input type="text" name="subject" required value="<?=h($_POST["subject"] ?? "")?>"/>
+        <input type="text" name="subject" required data-validation-required="<?=h($tr['err_required'])?>" value="<?=h($_POST["subject"] ?? "")?>"/>
 
         <label><?=h($tr['message'])?> *</label>
-        <textarea name="message" required><?=h($_POST["message"] ?? "")?></textarea>
+        <textarea name="message" required data-validation-required="<?=h($tr['err_required'])?>"><?=h($_POST["message"] ?? "")?></textarea>
 
         <button class="btn" type="submit"><?=h($tr['send'])?></button>
       </form>
@@ -202,5 +188,37 @@ $whatsTextCurrent = $whatsText[$lang] ?? $whatsText['pl'];
 
     </div>
   </div>
+
+<script>
+(() => {
+  const fields = document.querySelectorAll(
+    'form [required]'
+  );
+
+  fields.forEach((field) => {
+    field.addEventListener('invalid', () => {
+      field.setCustomValidity('');
+
+      if (field.validity.valueMissing) {
+        field.setCustomValidity(
+          field.dataset.validationRequired || ''
+        );
+      } else if (
+        field.validity.typeMismatch
+        && field.dataset.validationEmail
+      ) {
+        field.setCustomValidity(
+          field.dataset.validationEmail
+        );
+      }
+    });
+
+    field.addEventListener('input', () => {
+      field.setCustomValidity('');
+    });
+  });
+})();
+</script>
+
 </body>
 </html>
