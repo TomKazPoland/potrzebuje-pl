@@ -2,6 +2,11 @@ name: AP09 Namespace Probe
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'release/three-pillars-source-of-truth-20260818_221459'
+    paths:
+      - '.github/workflows/namespace-probe.yml'
 
 permissions:
   contents: read
@@ -36,6 +41,7 @@ jobs:
             fi
 
             cd "$HOME"
+
             if [ -d public_html/3pillars ]; then
               echo "HOME_RELATIVE_3PILLARS_EXISTS=YES"
               cd public_html/3pillars
