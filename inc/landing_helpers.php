@@ -15,9 +15,18 @@ function pp_html_lang($lang) {
     return $map[$lang] ?? 'en';
 }
 
+function pp_site_prefix() {
+    $scriptName = (string)($_SERVER['SCRIPT_NAME'] ?? '');
+    return (strpos($scriptName, '/3pillars/') === 0) ? '/3pillars' : '';
+}
+
+function pp_language_path($lang) {
+    $prefix = pp_site_prefix();
+    return ($lang === 'pl') ? $prefix . '/' : $prefix . '/' . $lang . '/';
+}
+
 function pp_canonical_url($lang) {
-    $base = 'https://potrzebuje.pl/3pillars';
-    return ($lang === 'pl') ? $base . '/' : $base . '/' . $lang . '/';
+    return 'https://potrzebuje.pl' . pp_language_path($lang);
 }
 
 function pp_base_prefix($lang) {

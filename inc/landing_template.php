@@ -706,14 +706,10 @@ textarea {
       <div class="nav-langs">
         <div class="nav-langs-left">
           <?php
-            $ppLangUrls = [
-              'pl' => '/3pillars/',
-              'en' => '/3pillars/en/',
-              'de' => '/3pillars/de/',
-              'fr' => '/3pillars/fr/',
-              'zh' => '/3pillars/zh/',
-              'hi' => '/3pillars/hi/',
-            ];
+            $ppLangUrls = [];
+            foreach (['pl', 'en', 'de', 'fr', 'zh', 'hi'] as $ppLangCode) {
+              $ppLangUrls[$ppLangCode] = pp_language_path($ppLangCode);
+            }
           ?>
           <?php foreach ($ppLangUrls as $ppLangCode => $ppLangUrl): ?>
             <a class="nav-lang" href="<?= pp_h($ppLangUrl) ?>" <?= $ppLangCode === $currentLang ? 'aria-current="page"' : '' ?>><?= pp_h(strtoupper($ppLangCode)) ?></a>
