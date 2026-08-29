@@ -33,3 +33,21 @@ function pp_base_prefix($lang) {
     return ($lang === 'pl') ? '' : '../';
 }
 
+
+function pp_route_path($lang, $route = '') {
+    $base = pp_language_path($lang);
+    $route = trim((string)$route, '/');
+    return ($route === '') ? $base : $base . $route . '/';
+}
+
+function pp_route_url($lang, $route = '') {
+    return 'https://potrzebuje.pl' . pp_route_path($lang, $route);
+}
+
+function pp_contact_path($lang) {
+    return pp_site_prefix() . '/contact.php?lang=' . rawurlencode((string)$lang);
+}
+
+function pp_asset_path($path) {
+    return pp_site_prefix() . '/' . ltrim((string)$path, '/');
+}

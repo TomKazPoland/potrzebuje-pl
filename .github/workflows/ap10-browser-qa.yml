@@ -1,0 +1,74 @@
+name: AP10 Browser QA
+
+on:
+  push:
+    branches:
+      - 'qa/ap10-browser-*'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  browser-qa:
+    name: Browser QA
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout candidate
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - name: Ensure PHP CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y php-cli curl
+
+      - name: Install QA dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Start isolated PHP server
+        run: |
+          mkdir -p qa-artifacts
+          php -S 127.0.0.1:8080 -t . > qa-artifacts/php-server.log 2>&1 &
+          echo $! > qa-artifacts/php-server.pid
+
+          for i in $(seq 1 30); do
+            if curl --fail --silent \
+              --connect-timeout 2 \
+              --max-time 3 \
+              http://127.0.0.1:8080/ \
+              >/dev/null
+            then
+              echo "PHP_SERVER_READY=YES"
+              exit 0
+            fi
+
+            sleep 1
+          done
+
+          echo "PHP_SERVER_READY=NO"
+          cat qa-artifacts/php-server.log || true
+          exit 1
+
+      - name: Run Playwright browser QA
+        run: npm run qa:browser
+
+      - name: Upload QA artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v5
+        with:
+          name: ap10-browser-qa
+          path: qa-artifacts/
+          retention-days: 14

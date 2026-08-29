@@ -8,6 +8,10 @@ require_once __DIR__ . '/landing_texts.php';
 $basePrefix = pp_base_prefix($currentLang);
 $contactUrl = $basePrefix . 'contact.php?lang=' . $currentLang;
 $demoApiUrl = $basePrefix . 'demo_api.php';
+$softwareDevelopmentUrl = pp_route_path(
+    $currentLang,
+    'software-development'
+);
 ?>
 <!DOCTYPE html>
 <html lang="<?= pp_h(pp_html_lang($currentLang)) ?>">
@@ -683,6 +687,21 @@ textarea {
     }
   </style>
   <!-- AP3_MOBILE_NAV_HIDE_SCROLL_CSS_END -->
+
+
+  <style>
+    .pp-pillar-detail-link {
+      color: inherit;
+      text-decoration-color: var(--primary);
+      text-decoration-thickness: 1px;
+      text-underline-offset: 0.18em;
+    }
+
+    .pp-pillar-detail-link:hover,
+    .pp-pillar-detail-link:focus-visible {
+      color: var(--primary);
+    }
+  </style>
 
 </head>
 
@@ -1581,7 +1600,7 @@ textarea {
 
       <article class="pp-card-clean">
         <span class="chip"><?= pp_h(pp_t('page.text_043')) ?></span>
-        <h3><?= pp_h(pp_t('page.text_044')) ?></h3>
+        <h3><a class="pp-pillar-detail-link" href="<?= pp_h($softwareDevelopmentUrl) ?>"><?= pp_h(pp_t('page.text_044')) ?></a></h3>
         <div class="pp-card-question"><?= pp_h(pp_t('page.text_045')) ?></div>
         <p><?= pp_h(pp_t('page.text_046')) ?></p>
       </article>

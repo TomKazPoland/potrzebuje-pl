@@ -1,0 +1,11 @@
+{
+  "name": "potrzebuje-pl-browser-qa",
+  "private": true,
+  "version": "1.0.0",
+  "devDependencies": {
+    "@playwright/test": "1.62.0"
+  },
+  "scripts": {
+    "qa:browser": "playwright test"
+  }
+}
