@@ -25,99 +25,107 @@ $ppNavItems = [
     ],
 ];
 
+$heroChips = [
+    'AI & GenAI',
+    'Custom Software',
+    'Web & Mobile',
+    'Data',
+    'Cloud & DevOps',
+];
+
 $capabilities = [
     ['software.capabilities.ai.title','software.capabilities.ai.text'],
     ['software.capabilities.custom.title','software.capabilities.custom.text'],
-    ['software.capabilities.cloud.title','software.capabilities.cloud.text'],
-    ['software.capabilities.devops.title','software.capabilities.devops.text'],
-    ['software.capabilities.data.title','software.capabilities.data.text'],
-    ['software.capabilities.mobile.title','software.capabilities.mobile.text'],
     ['software.capabilities.web.title','software.capabilities.web.text'],
+    ['software.capabilities.data.title','software.capabilities.data.text'],
+    ['software.capabilities.cloud.title','software.capabilities.cloud.text'],
     ['software.capabilities.qa.title','software.capabilities.qa.text'],
-    ['software.capabilities.consulting.title','software.capabilities.consulting.text'],
 ];
 
 $mainCases = [
     [
-        'software.experience.transformation.title',
-        'software.experience.transformation.need',
-        'software.experience.transformation.solution',
-        [
-            'software.capabilities.ai.title',
-            'software.capabilities.custom.title',
-            'software.capabilities.data.title',
-            'software.capabilities.cloud.title',
+        'letter' => 'A',
+        'title' => 'software.experience.transformation.title',
+        'text' => 'software.experience.transformation.need',
+        'enables' => 'software.experience.transformation.solution',
+        'tags' => [
+            'Multi-agent architecture',
+            'FastAPI',
+            'Next.js',
+            'PostgreSQL',
+            'Redis',
+            'Governance',
+            'Automated reporting',
         ],
     ],
     [
-        'software.experience.operations.title',
-        'software.experience.operations.need',
-        'software.experience.operations.solution',
-        [
-            'software.capabilities.ai.title',
-            'software.capabilities.custom.title',
-            'software.capabilities.web.title',
-            'software.capabilities.cloud.title',
+        'letter' => 'B',
+        'title' => 'software.experience.operations.title',
+        'text' => 'software.experience.operations.need',
+        'enables' => 'software.experience.operations.solution',
+        'tags' => [
+            'Multi-tenancy',
+            'Workflow engine',
+            'OCR',
+            'Real-time AI',
+            'Integrations',
+            'Encrypted credentials',
+            'Controlled AI changes',
         ],
     ],
     [
-        'software.experience.knowledge.title',
-        'software.experience.knowledge.need',
-        'software.experience.knowledge.solution',
-        [
-            'software.capabilities.ai.title',
-            'software.capabilities.custom.title',
-            'software.capabilities.data.title',
-            'software.capabilities.cloud.title',
+        'letter' => 'C',
+        'title' => 'software.experience.knowledge.title',
+        'text' => 'software.experience.knowledge.need',
+        'enables' => 'software.experience.knowledge.solution',
+        'tags' => [
+            '15 microservices',
+            'WebRTC / MediaSoup',
+            'RAG',
+            'Kafka',
+            'OpenFGA',
+            'AWS EKS',
+            'Terraform',
+            'CI/CD',
         ],
     ],
 ];
 
 $smallCases = [
-    [
-        'software.experience.education.title',
-        'software.experience.education.text',
-        [
-            'software.capabilities.ai.title',
-            'software.capabilities.web.title',
-            'software.capabilities.data.title',
-        ],
-    ],
-    [
-        'software.experience.vision.title',
-        'software.experience.vision.text',
-        [
-            'software.capabilities.ai.title',
-            'software.capabilities.custom.title',
-            'software.capabilities.data.title',
-        ],
-    ],
-    [
-        'software.experience.automation.title',
-        'software.experience.automation.text',
-        [
-            'software.capabilities.ai.title',
-            'software.capabilities.custom.title',
-        ],
-    ],
+    ['software.experience.automation.title','software.experience.automation.text'],
+    ['software.experience.social.title','software.experience.social.text'],
+    ['software.experience.education.title','software.experience.education.text'],
+    ['software.experience.vision.title','software.experience.vision.text'],
+    ['software.experience.healthcare.title','software.experience.healthcare.text'],
+    ['software.experience.restaurant.title','software.experience.restaurant.text'],
+    ['software.experience.react_laravel.title','software.experience.react_laravel.text'],
 ];
 
-$startSteps = [
-    [
-        'software.start.step1.number',
-        'software.start.step1.title',
-        'software.start.step1.text',
-    ],
-    [
-        'software.start.step2.number',
-        'software.start.step2.title',
-        'software.start.step2.text',
-    ],
-    [
-        'software.start.step3.number',
-        'software.start.step3.title',
-        'software.start.step3.text',
-    ],
+$aiTypes = [
+    'Chatbots',
+    'RAG Systems',
+    'AI Agents',
+    'LLM Applications',
+    'Document Processing',
+    'Computer Vision',
+    'Predictive Analytics',
+    'Recommendation Systems',
+    'AIOps',
+];
+
+$engineeringCards = [
+    ['Architecture','software.engineering.architecture.text'],
+    ['Security','software.engineering.security.text'],
+    ['Cloud & DevOps','software.engineering.cloud.text'],
+    ['AI Engineering','software.engineering.ai.text'],
+    ['Data & Integration','software.engineering.data.text'],
+];
+
+$collaborationModels = [
+    ['software.start.step1.title','software.start.step1.text'],
+    ['software.start.step2.title','software.start.step2.text'],
+    ['software.start.step3.title','software.start.step3.text'],
+    ['software.start.step4.title','software.start.step4.text'],
 ];
 ?>
 <!DOCTYPE html>
@@ -159,7 +167,7 @@ $startSteps = [
 
   <link
     rel="stylesheet"
-    href="<?= pp_h(pp_asset_path('assets/software-development.css')) ?>"
+    href="<?= pp_h(pp_asset_path('assets/software-development.css') . '?v=ce0b45f07b18e542') ?>"
   >
 </head>
 
@@ -167,232 +175,272 @@ $startSteps = [
 
 <?php require __DIR__ . '/site_nav.php'; ?>
 
-<main class="page">
+<main class="page software-v42">
 
-  <section class="software-hero">
+  <section class="sd-hero">
+    <div class="sd-wrap sd-hero-grid">
 
-    <div>
-      <div class="software-eyebrow">
-        <?= pp_h(pp_t('software.hero.eyebrow')) ?>
-      </div>
+      <div>
+        <div class="sd-eyebrow">
+          <?= pp_h(pp_t('software.hero.eyebrow')) ?>
+        </div>
 
-      <h1><?= pp_h(pp_t('software.hero.title')) ?></h1>
+        <h1><?= pp_h(pp_t('software.hero.title')) ?></h1>
 
-      <p class="software-lead">
-        <?= pp_h(pp_t('software.hero.lead')) ?>
-      </p>
+        <p class="sd-lead">
+          <?= pp_h(pp_t('software.hero.lead')) ?>
+        </p>
 
-      <div class="hero-actions">
         <a
           class="btn btn-primary"
           href="<?= pp_h($contactUrl) ?>"
         ><?= pp_h(pp_t('software.hero.cta')) ?></a>
+
+        <div class="sd-chip-row">
+          <?php foreach ($heroChips as $chip): ?>
+            <span class="sd-chip"><?= pp_h($chip) ?></span>
+          <?php endforeach; ?>
+        </div>
       </div>
-    </div>
 
-    <div class="software-visual" aria-hidden="true">
-      <div class="visual-stack">
-        <div class="visual-line"></div>
-        <div class="visual-line"></div>
-        <div class="visual-line"></div>
+      <aside class="sd-hero-note">
+        <h2><?= pp_h(pp_t('software.hero.note.title')) ?></h2>
+        <p><?= pp_h(pp_t('software.hero.note.text')) ?></p>
+      </aside>
+
+    </div>
+  </section>
+
+  <section class="sd-section">
+    <div class="sd-wrap">
+
+      <div class="sd-eyebrow">
+        <?= pp_h(pp_t('software.bridge.eyebrow')) ?>
       </div>
-    </div>
 
-  </section>
-
-  <section class="section" id="capabilities">
-
-    <h2 class="section-title">
-      <?= pp_h(pp_t('software.capabilities.title')) ?>
-    </h2>
-
-    <p class="section-sub">
-      <?= pp_h(pp_t('software.capabilities.lead')) ?>
-    </p>
-
-    <div class="capability-grid">
-
-      <?php foreach ($capabilities as $capability): ?>
-
-        <article class="capability">
-
-          <span
-            class="capability-index"
-            aria-hidden="true"
-          ></span>
-
-          <h3><?= pp_h(pp_t($capability[0])) ?></h3>
-
-          <p><?= pp_h(pp_t($capability[1])) ?></p>
-
-        </article>
-
-      <?php endforeach; ?>
-
-    </div>
-
-  </section>
-
-  <section class="section" id="experience">
-
-    <h2 class="section-title">
-      <?= pp_h(pp_t('software.experience.title')) ?>
-    </h2>
-
-    <p class="section-sub">
-      <?= pp_h(pp_t('software.experience.lead')) ?>
-    </p>
-
-    <div class="experience-grid">
-
-      <?php foreach ($mainCases as $caseIndex => $case): ?>
-
-        <article
-          class="experience-card<?= $caseIndex === 0 ? ' featured' : '' ?>"
-        >
-
-          <h3><?= pp_h(pp_t($case[0])) ?></h3>
-
-          <div class="case-block">
-
-            <span class="case-label">
-              <?= pp_h(pp_t('software.experience.need_label')) ?>
-            </span>
-
-            <p><?= pp_h(pp_t($case[1])) ?></p>
-
-          </div>
-
-          <div class="case-block">
-
-            <span class="case-label">
-              <?= pp_h(pp_t('software.experience.solution_label')) ?>
-            </span>
-
-            <p><?= pp_h(pp_t($case[2])) ?></p>
-
-          </div>
-
-          <div
-            class="tags"
-            aria-label="<?= pp_h(pp_t('software.experience.capabilities_label')) ?>"
-          >
-            <?php foreach ($case[3] as $tagKey): ?>
-              <span class="tag">
-                <?= pp_h(pp_t($tagKey)) ?>
-              </span>
-            <?php endforeach; ?>
-          </div>
-
-        </article>
-
-      <?php endforeach; ?>
-
-    </div>
-
-    <div class="experience-small-grid">
-
-      <?php foreach ($smallCases as $case): ?>
-
-        <article class="experience-small">
-
-          <h3><?= pp_h(pp_t($case[0])) ?></h3>
-
-          <p><?= pp_h(pp_t($case[1])) ?></p>
-
-          <div
-            class="tags"
-            aria-label="<?= pp_h(pp_t('software.experience.capabilities_label')) ?>"
-          >
-            <?php foreach ($case[2] as $tagKey): ?>
-              <span class="tag">
-                <?= pp_h(pp_t($tagKey)) ?>
-              </span>
-            <?php endforeach; ?>
-          </div>
-
-        </article>
-
-      <?php endforeach; ?>
-
-    </div>
-
-  </section>
-
-  <section class="section" id="start">
-
-    <div class="start-panel">
-
-      <h2 class="section-title">
-        <?= pp_h(pp_t('software.start.title')) ?>
+      <h2 class="sd-section-title">
+        <?= pp_h(pp_t('software.bridge.title')) ?>
       </h2>
 
-      <p class="section-sub">
-        <?= pp_h(pp_t('software.start.lead')) ?>
+      <div class="sd-two-col">
+
+        <div class="sd-copy">
+          <p><?= pp_h(pp_t('software.bridge.text1')) ?></p>
+          <p><?= pp_h(pp_t('software.bridge.text2')) ?></p>
+        </div>
+
+        <article class="sd-soft-card">
+          <h3><?= pp_h(pp_t('software.bridge.model.title')) ?></h3>
+          <p><?= pp_h(pp_t('software.bridge.model.text')) ?></p>
+          <p><?= pp_h(pp_t('software.bridge.model.scope')) ?></p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="sd-section sd-section-soft">
+    <div class="sd-wrap">
+
+      <div class="sd-eyebrow">
+        <?= pp_h(pp_t('software.capabilities.eyebrow')) ?>
+      </div>
+
+      <h2 class="sd-section-title">
+        <?= pp_h(pp_t('software.capabilities.title')) ?>
+      </h2>
+
+      <p class="sd-section-lead">
+        <?= pp_h(pp_t('software.capabilities.lead')) ?>
       </p>
 
-      <div class="start-grid">
+      <div class="sd-grid sd-grid-3">
+        <?php foreach ($capabilities as $capability): ?>
+          <article class="sd-card">
+            <h3><?= pp_h(pp_t($capability[0])) ?></h3>
+            <p><?= pp_h(pp_t($capability[1])) ?></p>
+          </article>
+        <?php endforeach; ?>
+      </div>
 
-        <?php foreach ($startSteps as $step): ?>
+    </div>
+  </section>
 
-          <article class="start-step">
+  <section class="sd-section">
+    <div class="sd-wrap">
 
-            <span class="step-number">
-              <?= pp_h(pp_t($step[0])) ?>
-            </span>
+      <div class="sd-eyebrow">
+        <?= pp_h(pp_t('software.experience.eyebrow')) ?>
+      </div>
 
-            <h3><?= pp_h(pp_t($step[1])) ?></h3>
+      <h2 class="sd-section-title">
+        <?= pp_h(pp_t('software.experience.title')) ?>
+      </h2>
 
-            <p><?= pp_h(pp_t($step[2])) ?></p>
+      <div class="sd-case-list">
+
+        <?php foreach ($mainCases as $case): ?>
+          <article class="sd-case">
+
+            <div class="sd-case-label">
+              <?= pp_h(pp_t('software.experience.project_label')) ?>
+              <?= pp_h($case['letter']) ?>
+            </div>
+
+            <h3><?= pp_h(pp_t($case['title'])) ?></h3>
+
+            <p><?= pp_h(pp_t($case['text'])) ?></p>
+
+            <p class="sd-case-impact">
+              <strong>
+                <?= pp_h(pp_t('software.experience.need_label')) ?>
+              </strong>
+              <?= pp_h(pp_t($case['enables'])) ?>
+            </p>
+
+            <div class="sd-case-tech">
+              <strong>
+                <?= pp_h(pp_t('software.experience.solution_label')) ?>
+              </strong>
+
+              <div class="sd-tag-row">
+                <?php foreach ($case['tags'] as $tag): ?>
+                  <span class="sd-tag"><?= pp_h($tag) ?></span>
+                <?php endforeach; ?>
+              </div>
+            </div>
 
           </article>
-
         <?php endforeach; ?>
 
       </div>
+    </div>
+  </section>
 
-      <div class="start-link">
-        <a
-          class="btn btn-secondary"
-          href="<?= pp_h($methodUrl) ?>"
-        ><?= pp_h(pp_t('software.start.method_link')) ?></a>
+  <section class="sd-section sd-section-soft">
+    <div class="sd-wrap">
+
+      <div class="sd-eyebrow">
+        <?= pp_h(pp_t('software.experience.more.eyebrow')) ?>
+      </div>
+
+      <h2 class="sd-section-title">
+        <?= pp_h(pp_t('software.experience.more.title')) ?>
+      </h2>
+
+      <p class="sd-section-lead">
+        <?= pp_h(pp_t('software.experience.more.lead')) ?>
+      </p>
+
+      <div class="sd-grid sd-grid-2">
+        <?php foreach ($smallCases as $case): ?>
+          <article class="sd-card sd-small-case">
+            <h3><?= pp_h(pp_t($case[0])) ?></h3>
+            <p><?= pp_h(pp_t($case[1])) ?></p>
+          </article>
+        <?php endforeach; ?>
       </div>
 
     </div>
-
   </section>
 
-  <section class="cta-panel">
+  <section class="sd-dark">
+    <div class="sd-wrap">
 
-    <div class="cta-copy">
+      <div class="sd-dark-block">
+
+        <div class="sd-eyebrow">
+          <?= pp_h(pp_t('software.ai.eyebrow')) ?>
+        </div>
+
+        <h2 class="sd-section-title">
+          <?= pp_h(pp_t('software.ai.title')) ?>
+        </h2>
+
+        <p class="sd-section-lead">
+          <?= pp_h(pp_t('software.ai.lead')) ?>
+        </p>
+
+        <div class="sd-dark-tags">
+          <?php foreach ($aiTypes as $type): ?>
+            <span><?= pp_h($type) ?></span>
+          <?php endforeach; ?>
+        </div>
+
+      </div>
+
+      <div class="sd-dark-block">
+
+        <div class="sd-eyebrow">
+          <?= pp_h(pp_t('software.engineering.eyebrow')) ?>
+        </div>
+
+        <h2 class="sd-section-title">
+          <?= pp_h(pp_t('software.engineering.title')) ?>
+        </h2>
+
+        <div class="sd-grid sd-grid-3">
+          <?php foreach ($engineeringCards as $card): ?>
+            <article class="sd-dark-card">
+              <h3><?= pp_h($card[0]) ?></h3>
+              <p><?= pp_h(pp_t($card[1])) ?></p>
+            </article>
+          <?php endforeach; ?>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <section class="sd-section">
+    <div class="sd-wrap">
+
+      <div class="sd-eyebrow">
+        <?= pp_h(pp_t('software.start.eyebrow')) ?>
+      </div>
+
+      <h2 class="sd-section-title">
+        <?= pp_h(pp_t('software.start.title')) ?>
+      </h2>
+
+      <div class="sd-grid sd-grid-2">
+        <?php foreach ($collaborationModels as $model): ?>
+          <article class="sd-card">
+            <h3><?= pp_h(pp_t($model[0])) ?></h3>
+            <p><?= pp_h(pp_t($model[1])) ?></p>
+          </article>
+        <?php endforeach; ?>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="sd-final-cta">
+    <div class="sd-wrap sd-cta-inner">
 
       <h2><?= pp_h(pp_t('software.cta.title')) ?></h2>
 
       <p><?= pp_h(pp_t('software.cta.text')) ?></p>
 
+      <a
+        class="btn btn-primary"
+        href="<?= pp_h($contactUrl) ?>"
+      ><?= pp_h(pp_t('software.cta.button')) ?></a>
+
     </div>
-
-    <a
-      class="btn btn-primary"
-      href="<?= pp_h($contactUrl) ?>"
-    ><?= pp_h(pp_t('software.cta.button')) ?></a>
-
   </section>
 
   <footer class="footer">
-
     <a href="<?= pp_h($homeUrl) ?>">
-
       <img
         class="brand-logo"
         src="<?= pp_h(pp_asset_path('Images/logo.svg')) ?>"
         alt="<?= pp_h(pp_t('site.brand.name')) ?>"
       >
-
     </a>
 
     <span><?= pp_h(pp_t('page.text_068')) ?></span>
-
   </footer>
 
 </main>
