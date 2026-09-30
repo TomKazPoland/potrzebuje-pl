@@ -187,21 +187,15 @@ current `main`.
 
 ## 8. Legacy public documentation copies
 
-As of 24/09/2026 stale copies were present under:
+On 24/09/2026 stale, non-canonical copies under
+`/home/potrzebuje/public_html/doc` returned HTTP 200 publicly.
 
-`/home/potrzebuje/public_html/doc`
+AP10.10 removed that directory from the public web root on 28/09/2026.
+The four former document URLs returned 404 in the final server and independent
+browser checks. A controlled backup is stored outside `public_html`.
 
-and returned HTTP 200 publicly.
-
-These files are:
-
-- non-canonical,
-- stale relative to GitHub `main`,
-- not required as public website content.
-
-Do not update them as if they were the Source of Truth.
-
-Blocking/removal belongs to a separate controlled hardening change.
+GitHub `main:doc/` is the Source of Truth for these documents. Do not restore
+the old copies to a public website path.
 
 ## 9. Runtime / generated data — do not commit
 

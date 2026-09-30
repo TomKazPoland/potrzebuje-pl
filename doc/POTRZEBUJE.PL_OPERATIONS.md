@@ -306,11 +306,13 @@ Canonical documentation belongs in GitHub under `doc/`.
 
 It does not need to be publicly served by the website.
 
-As of 24/09/2026 legacy copies under `/public_html/doc/` were detected as
+On 24/09/2026 legacy copies under `/public_html/doc/` were detected as
 publicly reachable and stale relative to GitHub canonical documents.
 
-Treat those copies as non-canonical. Removal/blocking is a separate hardening
-action and must not be mixed into an unrelated documentation-content commit.
+AP10.10 removed these copies from the public web root on 28/09/2026.
+All four former document URLs returned 404 in the final server checks and
+independent browser check. The controlled backup remains outside the web root.
+GitHub `main:doc/` remains the canonical documentation location.
 
 ## 16. Emergency recovery
 

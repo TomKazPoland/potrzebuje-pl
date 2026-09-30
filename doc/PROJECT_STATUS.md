@@ -183,19 +183,15 @@ Canonical documentation location:
 
 GitHub `main` → `doc/`.
 
-Current objective:
+Current documentation state:
 
-synchronize operational documentation with completed AP09/AP10.8 state.
+AP10.9 synchronized operational documentation with the completed AP09/AP10.8
+state in GitHub `main:doc/`.
 
-Legacy copies under `/public_html/doc/` are stale and were observed publicly
-reachable on 24/09/2026.
-
-They are not canonical.
-
-Follow-up hardening action:
-
-remove or block public access to legacy documentation after canonical sync,
-using a separate controlled change.
+Legacy copies under `/public_html/doc/` were publicly reachable on 24/09/2026.
+AP10.10 removed them from the public web root on 28/09/2026. The four former
+URLs returned 404 in the final server and independent browser checks.
+These historical copies are not canonical.
 
 ## 9. Additional applications
 
@@ -229,8 +225,8 @@ cache-safe asset versioning plus real-browser production acceptance.
 
 Documentation/security:
 
-legacy `/public_html/doc/` copies are publicly reachable and should be removed
-or blocked in a separate hardening change.
+AP10.10 removed the legacy `/public_html/doc/` copies from the public web
+root. Final checks found no old document content at the four former URLs.
 
 ## 11. Next milestone
 
@@ -240,5 +236,5 @@ first paying customer and first customer reference.
 
 Technical/documentation milestone:
 
-complete AP10.9 documentation synchronization and documentation-exposure
-hardening without changing the accepted production product release.
+AP10.9 documentation synchronization and AP10.10 documentation-exposure
+hardening are complete. The accepted production product release was unchanged.
