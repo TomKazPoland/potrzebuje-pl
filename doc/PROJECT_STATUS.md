@@ -177,7 +177,7 @@ Final AP10.8 regression:
 
 AP10.9:
 
-ACTIVE.
+CLOSED.
 
 Canonical documentation location:
 
