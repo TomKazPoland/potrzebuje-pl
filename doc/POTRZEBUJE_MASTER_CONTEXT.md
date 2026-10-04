@@ -311,7 +311,7 @@ CLOSED 100%.
 
 AP10.9 documentation synchronization:
 
-ACTIVE.
+CLOSED.
 
 ## 16. Quick start for future work
 
